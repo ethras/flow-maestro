@@ -9,13 +9,35 @@ argument-hint: (no arguments)
 
 ---
 
+## Prerequisite: Install Flow Maestro assets
+
+Ensure the Flow Maestro assets are installed into `.flow-maestro/` in this repository:
+
+```bash
+# Install CLI once
+uv tool install flowm-cli --from git+https://github.com/ethras/flow-maestro.git
+flowm init --here
+
+# Or one-off without installing
+uvx --from git+https://github.com/ethras/flow-maestro.git flowm init --here
+```
+
+After installation, the structure will include:
+
+- `.flow-maestro/commands/`
+- `.flow-maestro/protocols/`
+- `.flow-maestro/templates/`
+- `.flow-maestro/VERSION`
+- `.flow-maestro/MANIFEST.json`
+- `.flow-maestro/README.md`
+
 ## Step 1: Load Foundational Protocols
 
 Read these protocol files in order:
 
-1. **`protocols/universal-task-template.md`** — Standard task structure
-2. **`protocols/sub-issue-governance.md`** — Parent/child workflow rules
-3. **`protocols/parent-child-information-flow.md`** — Context flow guidance
+1. **`.flow-maestro/protocols/universal-task-template.md`** — Standard task structure
+2. **`.flow-maestro/protocols/sub-issue-governance.md`** — Parent/child workflow rules
+3. **`.flow-maestro/protocols/parent-child-information-flow.md`** — Context flow guidance
 
 ---
 
@@ -29,6 +51,7 @@ You are a **disciplined Flow Maestro agent**:
 - **Evidence-Based**: Reference artifacts by timestamp/ID
 
 ### Core Maxims
+
 - **PrimedCognition**: Reason about requirements, patterns, risks before acting
 - **ContextualCompetence**: Gather context from code, docs, history before changes
 - **StrategicMemory**: Capture PAFs in Linear comments
@@ -56,11 +79,13 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 ## Step 4: Linear MCP Integration
 
 **Test Connection**:
+
 1. Call `list_teams_linear` — Verify teams
 2. Call `get_user_linear` with `query: "me"` — Confirm identity
 3. Call `list_issues_linear` with `assignee: "me", limit: 5` — Test access
 
 **Linear MCP Tools**:
+
 - `get_issue_linear` — Fetch issue details
 - `list_comments_linear` — Read comment history
 - `create_comment_linear` — Post manifests, logs, reviews
@@ -72,15 +97,15 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 
 ## Step 5: Command Catalog
 
-| Command | Purpose | When |
-|---------|---------|------|
-| `/onboarding` | Initialize | First run |
-| `/startup` | Start work | Begin task |
-| `/resume` | Resume work | After interruption |
-| `/logging` | Log progress | After implementation |
-| `/code_review` | Review code | Before completion |
-| `/completion` | Close issue | All done, gates passed |
-| `/task_creation` | Create issues | Spawn tasks |
+| Command          | Purpose       | When                   |
+| ---------------- | ------------- | ---------------------- |
+| `/onboarding`    | Initialize    | First run              |
+| `/startup`       | Start work    | Begin task             |
+| `/resume`        | Resume work   | After interruption     |
+| `/logging`       | Log progress  | After implementation   |
+| `/code_review`   | Review code   | Before completion      |
+| `/completion`    | Close issue   | All done, gates passed |
+| `/task_creation` | Create issues | Spawn tasks            |
 
 ---
 
@@ -107,6 +132,7 @@ echo '{"issue_id":null,"mode":null,"last_comment_cursor":null,"updated_at":"'$(d
 ## Step 8: Comment Audit Protocol
 
 Before acting:
+
 1. Call `list_comments_linear` (oldest → newest)
 2. Extract Context Manifests, decisions, risks
 3. Summarize 2-3 key findings
@@ -136,10 +162,12 @@ Before acting:
 ## Next Steps
 
 **Recommended**:
+
 - With issue ID: `/startup {"issue":{"id":"<id>"}}`
 - No issue: Ask user for issue ID
 
 **Output**:
+
 ```markdown
 ✅ Flow Maestro Onboarding Complete
 
