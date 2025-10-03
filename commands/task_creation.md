@@ -13,10 +13,15 @@ argument-hint: {"issue":{"id":"<parent-id>"},"task_details":{...}}
    - **Impacted Modules**: List affected components
    - **Verification Plan**: How to verify completion
 
-2. **Create Issue**: `create_issue_linear(team: "<team-id>", title: "...", description: "...", ...)`
+2. **Create Issue**: `create_issue_linear(team: "<team-key>", project: "<project-key>", title: "...", description: "...", ...)`
    - Set title, description (with template)
-   - Set priority, labels, team, project
-   - Set `parentId` if creating child issue
+   - Set priority, labels, team, project using the string identifiers returned by `list_teams_linear` / `list_projects_linear`
+   - Set `parentId` if creating child issue (use the issue ID string, e.g., `"FM-123"`)
+
+> ℹ️ **Linear Parameter Reference**
+> - `team`: Team key or name from `list_teams_linear`
+> - `project`: Project name from `list_projects_linear`
+> - `parentId`: Issue identifier string for parent/child links
 
 3. **Verify Creation**: Confirm issue created with correct structure
 
@@ -98,10 +103,10 @@ All tasks must follow this structure:
 
 ```bash
 # Create child 1
-/task_creation {"task_details":{"title":"Implement JWT Service","description":"[Template]","priority":"High","parentId":"FM-100","team":"team-123"}}
+/task_creation {"task_details":{"title":"Implement JWT Service","description":"[Template]","priority":"High","parentId":"FM-100","team":"Engineering","project":"Authentication System"}}
 
 # Create child 2
-/task_creation {"task_details":{"title":"Implement OAuth Integration","description":"[Template]","priority":"High","parentId":"FM-100","team":"team-123"}}
+/task_creation {"task_details":{"title":"Implement OAuth Integration","description":"[Template]","priority":"High","parentId":"FM-100","team":"Engineering","project":"Authentication System"}}
 ```
 
 ---
