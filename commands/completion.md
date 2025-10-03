@@ -8,7 +8,7 @@ argument-hint: {"issue":{"id":"<issue-id>"},"summary":"..."}
 ## Linear MCP Workflow
 
 1. **Pre-Completion Verification**:
-   - [ ] All success criteria met
+   - [ ] All success criteria met (note satisfaction in summary; leave Linear description checkboxes for the issue owner)
    - [ ] Quality gates passed (lint/test/build)
    - [ ] Code review completed (`reviews_done: true`)
    - [ ] Final work log posted
@@ -25,10 +25,13 @@ argument-hint: {"issue":{"id":"<issue-id>"},"summary":"..."}
 3. **Update Status**: `update_issue_linear(id: "<issue-id>", state: "Review")` or "Done"
 
 4. **Clear State**: Write null to `.flow-maestro/cursor.json`
+   - If you are in a read-only environment, state "cursor pending (read-only env)" instead of writing the file
 
 ---
 
 ## Expected Output (Child Issue)
+
+Use the Final Completion Summary skeleton in `protocols/shared-templates.md`, then tailor the sections with the specifics of your issue. Example:
 
 ```markdown
 ## Final Completion Summary

@@ -22,6 +22,7 @@ argument-hint: {"issue":{"id":"<issue-id>"},"context":{...}}
    - Provide actionable recommendations
 
 4. **Update State**: Write cursor to `.flow-maestro/cursor.json`
+   - If the environment is read-only, explicitly note "cursor pending (read-only env)" in your review output instead
 
 ---
 
@@ -98,7 +99,7 @@ argument-hint: {"issue":{"id":"<issue-id>"},"context":{...}}
 
 ## Confidence Assessment After Review
 
-Re-calculate confidence with review results:
+Re-calculate confidence with review results (see `protocols/shared-templates.md` for the checklist):
 
 ```markdown
 **Confidence Assessment**: 100% (6/6 criteria)

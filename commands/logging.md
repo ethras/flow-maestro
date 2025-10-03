@@ -9,7 +9,7 @@ argument-hint: {"issue":{"id":"<issue-id>"},"observations":{...}}
 
 1. **Determine Scope**: Delta (< 24h, same agent) or Full log
 
-2. **Format Work Log**:
+2. **Format Work Log** (see skeleton in `protocols/shared-templates.md`):
    - **Status**: Current work status
    - **Actions**: What was done since last log
    - **Findings**: Discoveries, issues found
@@ -24,6 +24,7 @@ argument-hint: {"issue":{"id":"<issue-id>"},"observations":{...}}
    - Reference child issue and timestamp
 
 5. **Update State**: Write cursor to `.flow-maestro/cursor.json`
+   - In read-only environments, note "cursor pending (read-only env)" in your log output instead
 
 ---
 

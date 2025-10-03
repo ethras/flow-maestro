@@ -14,7 +14,9 @@ argument-hint: {"issue":{"id":"<issue-id>"}}
    - Audit oldest → newest for Context Manifests, decisions, risks
    - Summarize 2-3 key findings
 
-3. **Update Status**: `update_issue_linear(id: "<issue-id>", state: "In Progress")`
+3. **Update Status** *(if applicable)*: `update_issue_linear(id: "<issue-id>", state: "In Progress")`
+   - Skip when the issue is a parent/coordination umbrella
+   - Skip when the issue already sits in Review/Done or another assignee owns the state
 
 4. **Calculate Confidence** (6 criteria):
    - ✅/❌ Success Criteria Clarity (cite evidence)
@@ -27,6 +29,7 @@ argument-hint: {"issue":{"id":"<issue-id>"}}
    **Threshold**: ≥95% (6/6 or 5/6) to proceed
 
 5. **Update State**: Write `.flow-maestro/cursor.json`
+   - If the filesystem is read-only, note "cursor pending (read-only env)" in your response instead
 
 ---
 
@@ -75,20 +78,26 @@ argument-hint: {"issue":{"id":"<issue-id>"}}
 
 ## Confidence <95% — STOP
 
-If confidence <95%, STOP and gather context:
+If confidence <95%, STOP and gather context using the shared checklist in `protocols/shared-templates.md`:
+
+1. Identify which criteria failed (cite evidence)
+2. List concrete research targets or stakeholders to unblock them
+3. Decide whether to pause, escalate, or schedule follow-up work
+4. Post a coordination log if the blocker affects parent/child issues
+5. Retry `/startup` only after missing facts are collected
 
 ```markdown
 **Confidence Assessment**: 67% (4/6 criteria)
 1. ✅ Success Criteria: Defined
-2. ❌ Integration Points: Auth middleware not documented — BLOCKER
+2. ❌ Integration Points: Auth middleware not documented — need owner confirmation
 3. ✅ Pattern Consistency: Found
-4. ❌ Risk Mitigation: No risk analysis — BLOCKER
+4. ❌ Risk Mitigation: No risk analysis — requires security review link
 5. ✅ Sub-Issue Alignment: N/A
 6. ✅ Verification Plan: Defined
 
-**Action**: STOP — Gather context for criteria #2, #4
+**Action**: STOP — Reach out to @owner for middleware docs; review security risk log
 
-**Next**: Research auth middleware integration, document risks, then retry `/startup`
+**Next**: `/logging` (capture blocker) or `/resume` once data gathered
 ```
 
 ---

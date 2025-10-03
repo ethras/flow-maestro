@@ -2,6 +2,12 @@
 
 This protocol guides agents on interpreting parent/child data provided by the server.
 
+## Quick Reference
+- [Parent → Child Flow](#parent--child-flow)
+- [Child → Parent Notifications](#child--parent-flow)
+- [Parent Completion Aggregation](#parent-completion-with-child-aggregation)
+- [Parent Startup Enumeration](#parent-startup-with-child-activity)
+
 ## Core Principle
 **Server provides data structure, agent provides semantic interpretation.**
 

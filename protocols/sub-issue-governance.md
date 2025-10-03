@@ -2,6 +2,12 @@
 
 This protocol defines how Flow Maestro agents handle parent/child issue hierarchies in Linear, ensuring clear ownership, traceability, and quality across multi-issue workflows.
 
+## Quick Reference
+- [Startup Discipline](#1-startup-discipline-mandatory)
+- [Logging Discipline](#2-logging-discipline-mandatory)
+- [Completion Sequencing](#4-completion-sequencing-mandatory)
+- [Blocked State Handling](#6-blocked-state-handling-mandatory)
+
 ## Core Principle
 
 **Sub-issues are the atomic unit of work. Parent issues are coordination umbrellas.**

@@ -1,6 +1,6 @@
 ---
 description: Create new Linear issues with proper structure and governance
-argument-hint: {"issue":{"id":"<parent-id>"},"task_details":{...}}
+argument-hint: {"task_details":{"title":"<title>","description":"<template>","priority":"High","team":"<team-key>","project":"<project-name>","parentId":"<optional-parent>"}}
 ---
 
 # `/task_creation` — Create Linear Issues
@@ -14,8 +14,9 @@ argument-hint: {"issue":{"id":"<parent-id>"},"task_details":{...}}
    - **Verification Plan**: How to verify completion
 
 2. **Create Issue**: `create_issue_linear(team: "<team-key>", project: "<project-key>", title: "...", description: "...", ...)`
-   - Set title, description (with template)
-   - Set priority, labels, team, project using the string identifiers returned by `list_teams_linear` / `list_projects_linear`
+   - Required keys for `task_details`: `title`, `description`, `priority`, `team`, `project`
+   - Optional keys: `parentId`, `labels`, `dueDate`, `estimate`
+   - Retrieve `team` and `project` identifiers via `list_teams_linear` and `list_projects_linear`
    - Set `parentId` if creating child issue (use the issue ID string, e.g., `"FM-123"`)
 
 > ℹ️ **Linear Parameter Reference**
