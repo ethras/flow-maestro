@@ -1,0 +1,28 @@
+name: Release templates
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare zip asset
+        run: |
+          mkdir -p dist
+          zip -r dist/flow-maestro-templates.zip commands protocols templates -x "*/.*" || true
+          ls -lh dist
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/flow-maestro-templates.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
