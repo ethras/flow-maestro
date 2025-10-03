@@ -1,40 +1,53 @@
-# `/task_creation` Command
+---
+description: Create new Linear issues with proper structure and governance
+argument-hint: {"issue":{"id":"<parent-id>"},"task_details":{...}}
+---
 
-## Purpose
-Create new Linear issues with proper structure, context, and alignment with parent/child governance.
+# `/task_creation` — Create Linear Issues
 
-## Signature
+## Linear MCP Workflow
+
+1. **Draft Task**: Use universal task template (see `protocols/universal-task-template.md`)
+   - **Summary**: One-sentence WHAT and WHY
+   - **Success Criteria**: Measurable acceptance criteria
+   - **Impacted Modules**: List affected components
+   - **Verification Plan**: How to verify completion
+
+2. **Create Issue**: `create_issue_linear(team: "<team-id>", title: "...", description: "...", ...)`
+   - Set title, description (with template)
+   - Set priority, labels, team, project
+   - Set `parentId` if creating child issue
+
+3. **Verify Creation**: Confirm issue created with correct structure
+
+4. **Update State**: Write cursor to `.flow-maestro/cursor.json`
+
+---
+
+## Universal Task Template
+
+All tasks must follow this structure:
+
+```markdown
+## Summary
+[One-sentence WHAT and WHY]
+
+## Success Criteria
+- [ ] Criterion 1 (measurable)
+- [ ] Criterion 2 (measurable)
+- [ ] Criterion 3 (measurable)
+
+## Impacted Modules
+- Module 1: [path/to/module]
+- Module 2: [path/to/module]
+
+## Verification Plan
+- Unit tests: [description]
+- Integration tests: [description]
+- Manual QA: [steps]
 ```
-/task_creation {"issue":{"id":"<parent-issue-id>"},"task_details":{"title":"...","description":"...","priority":"...","parent_id":"..."}}
-```
 
-**Parameters**:
-- `issue.id` (optional): Context issue for task creation
-- `task_details` (required): New task details
-  - `title` (required): Task title
-  - `description` (required): Task description (use universal template)
-  - `priority` (optional): High/Medium/Low
-  - `parent_id` (optional): Parent issue ID for sub-issues
-  - `team_id` (optional): Team ID
-  - `project_id` (optional): Project ID
-  - `labels` (optional): Array of label names
-  - `assignee_id` (optional): Assignee ID
-
-## What This Command Does
-
-1. **Validates Task Details**
-   - Ensures title is clear and specific
-   - Validates description follows universal template
-   - Checks for duplicate titles (if parent specified)
-
-2. **Creates Issue in Linear**
-   - Posts issue with provided details
-   - Links to parent if specified
-   - Applies labels and metadata
-
-3. **Returns Created Issue**
-   - Provides issue ID and identifier
-   - Confirms creation success
+---
 
 ## Expected Output
 
@@ -49,162 +62,103 @@ Create new Linear issues with proper structure, context, and alignment with pare
 - Team: Engineering
 - Project: Authentication System
 
-**Description** (follows universal template):
-- Summary: One-sentence WHAT and WHY
-- Success Criteria: Measurable acceptance criteria
-- Impacted Modules: Listed
-- Verification Plan: Documented
+**Description**: Follows universal template
+- Summary: ✓
+- Success Criteria: ✓ (3 criteria)
+- Impacted Modules: ✓
+- Verification Plan: ✓
 
 **Created in Linear**: https://linear.app/team/issue/FM-124
 
-**Recommended next command**: `/startup {"issue":{"id":"FM-124"}}` (start work) or `/task_creation` (create more tasks)
+**Next**: `/startup {"issue":{"id":"FM-124"}}` (start work) or `/task_creation` (create more)
 ```
 
-## Universal Task Template
+---
 
-All tasks must follow this structure:
+## Parent/Child Task Creation
+
+### Creating Parent (Epic/Meta Issue)
+
+1. Draft parent using universal template (high-level)
+2. Call `create_issue_linear` without `parentId`
+3. Create children with `parentId` set to parent ID
 
 ```markdown
-## Summary
-One sentence WHAT and WHY.
+**Parent Created**: FM-100 - Authentication System Epic
 
-## Success Criteria
-- [ ] Criterion 1 (measurable)
-- [ ] Criterion 2 (measurable)
+**Children to Create**:
+1. FM-101: JWT Implementation
+2. FM-102: OAuth Integration
+3. FM-103: Session Management
 
-## Impacted Modules/Services
-- Project(s): [apps/packages]
-- Modules: [list]
-
-## Data Contracts / APIs (if applicable)
-- Endpoints: [list]
-- Request/Response shapes: [concise schema]
-
-## Risks & Mitigations
-- Risk: [item] → Mitigation: [plan]
-
-## Verification Plan
-- Lint/Test/Build targets
-- Manual QA steps (if UI/API)
-
-## Dependencies / Related Issues
-- [links]
-
-## Agent Compatibility & Constraints
-- Capabilities required: [technology stack]
-- Notes: [safety mode, test data, env]
-
-## Context Manifest (to be populated during startup)
-- Link to "Context Review Summary" comment
+**Next**: `/task_creation` (create children)
 ```
 
-## Creating Tasks from a PRP
-
-**Process**:
-1. Draft parent/meta issue (umbrella) using universal template
-2. Create parent via `/task_creation`
-3. For each child task, call `/task_creation` with `parent_id` set to parent issue ID
-4. Set priority/labels through task details
-5. Link PRP URL or repo path in description
-
-**Example**:
+### Creating Children
 
 ```bash
-# Create parent issue
-/task_creation {"task_details":{"title":"Authentication System Epic","description":"[Universal template filled]","priority":"High","team_id":"team-123","project_id":"proj-456"}}
+# Create child 1
+/task_creation {"task_details":{"title":"Implement JWT Service","description":"[Template]","priority":"High","parentId":"FM-100","team":"team-123"}}
 
-# Create child issues
-/task_creation {"task_details":{"title":"Implement JWT Service","description":"[Universal template filled]","priority":"High","parent_id":"FM-100","team_id":"team-123"}}
-
-/task_creation {"task_details":{"title":"Implement OAuth Integration","description":"[Universal template filled]","priority":"High","parent_id":"FM-100","team_id":"team-123"}}
-
-/task_creation {"task_details":{"title":"Implement Session Management","description":"[Universal template filled]","priority":"Medium","parent_id":"FM-100","team_id":"team-123"}}
+# Create child 2
+/task_creation {"task_details":{"title":"Implement OAuth Integration","description":"[Template]","priority":"High","parentId":"FM-100","team":"team-123"}}
 ```
 
-## Definition of Ready (DoR)
+---
 
-Before moving new issue to "Todo", ensure description contains:
+## Task Creation from PRP (Product Requirements Proposal)
 
-- **Summary**: One sentence WHAT and WHY
-- **Success Criteria**: Measurable, verifiable checklist
-- **Impacted Modules/Services**: Explicit list
-- **Data Contracts/APIs**: Endpoints, request/response shapes (if applicable)
-- **Risks & Mitigations**: Known risks with mitigation plan
-- **Verification Plan**: How reviewers will verify completion
-- **Dependencies/Related Issues**: Links in Linear
-- **Agent Compatibility**: Labels/notes for required capabilities
+When creating tasks from PRP:
 
-## Duplicate Detection
+1. **Read PRP**: Extract requirements, scope, acceptance criteria
+2. **Determine Structure**: Single task or parent + children?
+3. **Draft Tasks**: Use universal template for each
+4. **Create in Linear**: Call `create_issue_linear` for each
+5. **Link PRP**: Include PRP URL in description
 
-The system blocks creation when:
-- Parent already has child with same normalized title
-- Recent sibling exists (7-day window)
-
-**If Blocked**:
 ```markdown
-❌ DUPLICATE DETECTED
+**PRP**: https://github.com/org/repo/pull/123
 
-**Reason**: Parent FM-100 already has child with title "Implement JWT Service"
+**Tasks Created**:
+- FM-100 (Parent): Authentication System Epic
+- FM-101 (Child): JWT Implementation
+- FM-102 (Child): OAuth Integration
+- FM-103 (Child): Session Management
 
-**Existing Issue**: FM-101 (created 2024-01-10)
-
-**Options**:
-1. Adjust title to include scope qualifiers (e.g., "JWT Service - Add Token Rotation")
-2. Reuse existing issue FM-101 instead of creating new one
-
-**Recommended**: Review FM-101 to determine if it covers your scope
-
-**Recommended next command**: `/resume {"issue":{"id":"FM-101"}}` (review existing) or retry with adjusted title
+**Next**: `/startup {"issue":{"id":"FM-101"}}` (start first child)
 ```
 
-**Retry with Adjusted Title**:
-```bash
-/task_creation {"task_details":{"title":"JWT Service - Add Token Rotation","description":"[Universal template]","priority":"High","parent_id":"FM-100"}}
+---
+
+## Confidence Assessment for New Tasks
+
+Before creating, ensure:
+
+```markdown
+**Confidence Assessment**: 100% (6/6 criteria)
+1. ✅ Success Criteria: Defined in template
+2. ✅ Integration Points: Identified in Impacted Modules
+3. ✅ Pattern Consistency: Referenced in description
+4. ✅ Risk Mitigation: Documented in description
+5. ✅ Sub-Issue Alignment: Parent/child structure clear
+6. ✅ Verification Plan: Documented in template
+
+**Ready to Create**: Yes
 ```
 
-## Task Sizing Guidelines
+---
 
-**Create sub-issues when**:
-- Estimated effort exceeds 4 hours or spans multiple components
-- Work streams can progress in parallel (e.g., frontend vs. backend)
-- Different skill sets or owners required for distinct deliverables
+## Next Command Logic
 
-**Keep work within single issue when**:
-- Changes are tightly coupled and must ship together
-- Splitting would introduce more coordination overhead than value
-- Effort remains within focused 1–4 hour chunk
+- **Task created, ready to start**: `/startup {"issue":{"id":"<new-id>"}}`
+- **More tasks to create**: `/task_creation` (create next)
+- **Parent created, create children**: `/task_creation` (with `parentId`)
+- **All tasks created**: `/startup` on first task
 
-## Priority Mapping
+---
 
-- **High**: Critical path, blockers, security issues
-- **Medium**: Important features, improvements
-- **Low**: Nice-to-haves, technical debt, documentation
+## Reference
 
-## Related Protocols
-- `task-creation.md` - Detailed task creation protocol
-- `universal-task-template.md` - Universal task template
-- `sub-issue-governance.md` - Parent/child relationship rules
-
-## Examples
-
-```bash
-# Create standalone task
-/task_creation {"task_details":{"title":"Fix authentication bug","description":"## Summary\nFix JWT token expiry validation bug\n\n## Success Criteria\n- [ ] Token expiry properly validated\n- [ ] Tests added for edge cases\n\n...","priority":"High","team_id":"team-123"}}
-
-# Create child task under parent
-/task_creation {"task_details":{"title":"Implement token refresh endpoint","description":"[Universal template filled]","priority":"High","parent_id":"FM-123","team_id":"team-123"}}
-
-# Create task with labels
-/task_creation {"task_details":{"title":"Add OAuth provider","description":"[Universal template filled]","priority":"Medium","labels":["authentication","oauth","backend"],"team_id":"team-123"}}
-```
-
-## State Updates
-
-After `/task_creation`, `.flow-maestro/cursor.json` is NOT updated (task creation doesn't change current workflow state).
-
-To start work on newly created task:
-
-```bash
-/startup {"issue":{"id":"FM-124"}}
-```
-
+- **Protocols**: `protocols/universal-task-template.md`, `protocols/sub-issue-governance.md`
+- **Linear MCP**: `create_issue_linear`, `list_teams_linear`, `list_projects_linear`
+- **Template**: See `protocols/universal-task-template.md`

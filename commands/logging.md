@@ -1,232 +1,114 @@
-# `/logging` Command
+---
+description: Log work progress to Linear issue comments
+argument-hint: {"issue":{"id":"<issue-id>"},"observations":{...}}
+---
 
-## Purpose
-Log work progress to Linear issue comments. Consolidates implementation work, decisions, and next steps.
+# `/logging` — Log Work Progress
 
-## Signature
-```
-/logging {"issue":{"id":"<issue-id>"},"observations":{"status":"...","actions":"...","findings":"...","blockers":"...","next_steps":"..."}}`
-```
+## Linear MCP Workflow
 
-**Parameters**:
-- `issue.id` (required): Linear issue identifier
-- `observations` (required): Work log details
-  - `status`: Current work status
-  - `actions`: Actions taken since last log
-  - `findings`: Discoveries or issues found
-  - `blockers`: Any blockers encountered
-  - `next_steps`: Planned next steps
+1. **Determine Scope**: Delta (< 24h, same agent) or Full log
 
-## What This Command Does
+2. **Format Work Log**:
+   - **Status**: Current work status
+   - **Actions**: What was done since last log
+   - **Findings**: Discoveries, issues found
+   - **Blockers**: Any blockers encountered
+   - **Next Steps**: Planned next actions
 
-1. **Determines Log Scope**
-   - Delta update (< 24h, same agent, no major changes)
-   - Full log (≥ 24h, different agent, or major changes)
+3. **Post to Linear**: `create_comment_linear(issueId: "<issue-id>", body: "<log>")`
 
-2. **Determines Parent vs Child Context**
-   - Child issue: Log ALL implementation detail
-   - Parent issue: Log ONLY coordination, reference children
+4. **Parent Notification** (if needed):
+   - Only for blockers or coordination needs
+   - Call `create_comment_linear` on parent issue
+   - Reference child issue and timestamp
 
-3. **Posts Work Log to Linear**
-   - Formats log using standard template
-   - Includes timestamp and agent attribution
-   - Updates Linear issue comments
+5. **Update State**: Write cursor to `.flow-maestro/cursor.json`
 
-4. **Evaluates Parent Notification** (for child issues)
-   - Decides if parent needs notification
-   - Posts parent notification if warranted
-
-5. **Updates State**
-   - Updates cursor in `.flow-maestro/cursor.json`
-   - Records logging timestamp
+---
 
 ## Expected Output
 
-### Child Issue Logging (Implementation Detail)
-
 ```markdown
-## Work Log Update - 2024-01-15 14:30 - (AI Agent)
+## Work Log Update - 2024-01-15 14:30
 
-#### Completed
+**Status**: Implementation in progress
+
+**Actions**:
 - Implemented JWT token generation service
-- Added unit tests for token validation
-- Integrated with existing auth middleware
+- Added RS256 signing algorithm
+- Created token validation interface
 
-#### Decisions
-- Chose RS256 over HS256 for better key rotation support
-- Set token expiry to 15 minutes with 7-day refresh window
-- Implemented token revocation list in Redis
+**Findings**:
+- Existing TokenService uses HS256, switching to RS256 for better security
+- Integration point with AuthMiddleware requires interface update
 
-#### Discovered
-- Existing auth middleware needs update for JWT format
-- Performance bottleneck in token validation (cached now)
+**Blockers**: None
 
-#### Code Changes
-- Added: src/services/JWTService.ts
-- Modified: src/middleware/auth.middleware.ts
-- Added: tests/unit/JWTService.test.ts
-
-#### Next Steps
+**Next Steps**:
 - Implement token refresh endpoint
 - Update API documentation
 - Run integration tests
 
 **Posted to Linear**: FM-123 (2024-01-15 14:30)
 
-**Parent Notification**: Not warranted (routine progress)
-
-**Recommended next command**: `/logging` (continue work) or `/code_review` (if ready for review)
+**Next**: `/logging` (continue) or `/code_review` (if ready)
 ```
 
-### Parent Issue Logging (Coordination Only)
+---
+
+## Parent vs Child Logging
+
+### Child Issue Logging
+- Log all implementation details on child
+- Include code changes, technical decisions, quality gates
+- Notify parent ONLY for blockers/coordination
+
+### Parent Issue Logging
+- Coordination updates only
+- Reference child logs by ID + timestamp
+- No implementation details
 
 ```markdown
-## Work Log Update - 2024-01-15 16:00 - (AI Agent)
+## Work Log Update - 2024-01-15 16:00 (Parent)
 
-#### Completed
-- Coordinated authentication flow across 3 sub-issues
-- Established shared AuthConfig interface
-- See FM-101 (2024-01-15 14:30) for JWT implementation details
-- See FM-102 (2024-01-15 15:15) for OAuth integration details
+**Coordination**:
+- FM-101 completed (2024-01-15 14:30) ✓
+- FM-102 blocked on OAuth endpoint (notified platform team)
+- FM-103 ready to start after FM-102
 
-#### Decisions
-- All auth components must use shared config interface
-- Security review required before parent completion
-- Integration tests will span all three components
-
-#### Next Steps
-- Resume FM-103 for session management implementation
-- Schedule security review after all children complete
+**Next**: Resolve FM-102 blocker
 
 **Posted to Linear**: FM-100 (2024-01-15 16:00)
-
-**Recommended next command**: `/startup {"issue":{"id":"FM-103"}}` (next child)
 ```
+
+---
 
 ## Parent Notification Decision
 
-After posting child work log, evaluate if parent notification is warranted:
+**Notify Parent When**:
+- Blocker requires escalation/coordination
+- Cross-child dependency discovered
+- Scope change affects siblings
 
-**Post parent notification IF**:
-- Log contains blockers requiring coordination
-- Log indicates completion/major milestone
-- Log contains decisions affecting siblings
-- Log discovers integration impacts on other children
-- Log changes assumptions from parent manifest
+**Don't Notify Parent For**:
+- Routine progress
+- Implementation details
+- Quality gate results (unless blocking)
 
-**Do NOT notify parent for**:
-- Routine progress (implementation work without blockers/impacts)
-- Minor bug fixes not affecting other children
-- Code refactoring within child scope
-- Normal quality gate execution
+---
 
-### Parent Notification Format
+## Next Command Logic
 
-```markdown
-## 🔗 Child Update: FM-102
+- **Work continues**: `/logging` (next session)
+- **Implementation complete**: `/code_review`
+- **Blockers found**: Resolve, then `/resume`
+- **All done**: `/code_review` → `/completion`
 
-**Event**: BLOCKER
-**Timestamp**: 2024-01-15 15:30
+---
 
-**Summary**: OAuth provider API changed, endpoint /v2/oauth/authorize not available
+## Reference
 
-**Impact**: FM-102 blocked, affects integration with FM-103 (session management depends on OAuth flow)
-
-**Details**: See FM-102 (2024-01-15 15:30) for full blocker analysis and mitigation options
-
-**Posted to Linear**: FM-100 (parent notification)
-
-**Recommended next command**: `/resume {"issue":{"id":"FM-100"}}` (coordinate blocker resolution)
-```
-
-## Log Scope Decision
-
-**Delta Update** (all must be true):
-- Most recent Work Log < 24 hours old
-- Same agent continues work
-- No sub-issue status changes since last log
-- No new blockers, critical decisions, or phase transitions
-- Implementation phase unchanged
-
-**Full Log** (any true):
-- No Work Log exists or last log ≥ 24 hours old
-- Different agent taking over
-- Sub-issue status or scope changed
-- New blocker, critical decision, or phase transition
-- Implementation resumed after pause
-
-## Work Log Template
-
-```markdown
-## Work Log Update - [YYYY-MM-DD HH:MM] - [Agent Attribution]
-
-#### Completed
-- [Action 1]
-- [Action 2]
-
-#### Decisions
-- [Decision 1 with rationale]
-- [Decision 2 with rationale]
-
-#### Discovered
-- [Finding 1]
-- [Finding 2]
-
-#### Code Changes
-- Modified: [file path]
-- Added: [file path]
-- Updated: [file path]
-
-#### Next Steps
-- [Next action 1]
-- [Next action 2]
-```
-
-## Transition to Code Review
-
-**Trigger**: After logging implementation work and before attempting completion.
-
-**Criteria**:
-- Implementation for planned change set is complete
-- Security-sensitive code, significant refactors, or architectural updates performed
-- Task is about to move toward completion or handoff
-
-**Action**:
-- Post final Work Log entry summarizing completed work
-- Invoke `/code_review` with modified files
-- Resolve all 🔴 findings before proceeding to `/completion`
-
-```markdown
-**Implementation Complete**: All planned changes implemented
-
-**Recommended next command**: `/code_review {"issue":{"id":"FM-123"},"context":{"modified_files":["src/services/JWTService.ts","src/middleware/auth.middleware.ts"]}}`
-```
-
-## Related Protocols
-- `logging.md` - Detailed logging protocol
-- `sub-issue-governance.md` - Parent vs child logging rules
-- `parent-child-information-flow.md` - Parent notification guidance
-
-## Examples
-
-```bash
-# Log work on child issue
-/logging {"issue":{"id":"FM-123"},"observations":{"status":"Implementing JWT service","actions":"Created JWTService class, added unit tests","findings":"Auth middleware needs update","blockers":"None","next_steps":"Implement token refresh endpoint"}}
-
-# Log coordination on parent issue
-/logging {"issue":{"id":"FM-100"},"observations":{"status":"Coordinating sub-issues","actions":"Established shared AuthConfig interface","findings":"FM-102 blocked on OAuth API change","blockers":"FM-102 blocked","next_steps":"Escalate blocker to platform team"}}
-```
-
-## State Updates
-
-After `/logging`, `.flow-maestro/cursor.json` is updated:
-
-```json
-{
-  "issue_id": "FM-123",
-  "mode": "logging",
-  "last_comment_cursor": "2024-01-15T14:30:00Z",
-  "updated_at": "2024-01-15T14:35:00Z"
-}
-```
-
+- **Protocols**: `protocols/sub-issue-governance.md`, `protocols/parent-child-information-flow.md`
+- **Linear MCP**: `create_comment_linear`
+- **Token Efficiency**: ≤600 tokens, capture details in Linear not response
