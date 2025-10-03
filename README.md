@@ -36,3 +36,29 @@ On each git tag (vX.Y.Z), the workflow builds `flow-maestro-templates.zip` conta
 - Windows: wrappers use `.ps1`/`.cmd` (no symlinks). POSIX: `flowm` shell wrapper with `chmod +x`.
 - For rate limits, set `GH_TOKEN` or `GITHUB_TOKEN`.
 - TLS verification is on by default; `--skip-tls` is available for special cases.
+
+## Release process
+
+1. Ensure the content to ship lives under `commands/`, `protocols/`, and `templates/`.
+2. Commit and push to `main`.
+3. Create and push a tag (semantic):
+
+```bash
+git tag vX.Y.Z
+git push origin vX.Y.Z
+```
+
+4. GitHub Actions workflow "Release templates" will run and publish a Release with the asset `flow-maestro-templates.zip` (contains `commands/`, `protocols/`, `templates/`).
+5. Verify the release and asset:
+
+```bash
+gh release view vX.Y.Z --repo ethras/flow-maestro --json assets,name,url
+```
+
+6. Consumers can install/update using uv:
+
+```bash
+uv tool install flowm-cli --from git+https://github.com/ethras/flow-maestro.git
+# or one-off
+uvx --from git+https://github.com/ethras/flow-maestro.git flowm init --here
+```
