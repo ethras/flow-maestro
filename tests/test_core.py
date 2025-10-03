@@ -3,7 +3,8 @@ import io
 import os
 import zipfile
 
-from src.flowm_cli import core
+from importlib.machinery import SourceFileLoader
+core = SourceFileLoader("flowm_core", "src/flowm_cli/core.py").load_module()
 
 
 def make_zip_from_dirs(zip_path: Path, src_root: Path):
