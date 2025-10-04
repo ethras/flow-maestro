@@ -17,10 +17,8 @@ jobs:
 
       - name: Prepare zip asset
         run: |
-          mkdir -p dist release_bundle/scripts
-          cp -R commands protocols templates release_bundle/
-          cp scripts/autopost.py release_bundle/scripts/
-          (cd release_bundle && zip -r ../dist/flow-maestro-templates.zip . -x "*/.*")
+          mkdir -p dist
+          zip -r dist/flow-maestro-templates.zip commands protocols templates scripts/autopost.py -x "*/.*"
           ls -lh dist
 
       - name: Publish GitHub Release
