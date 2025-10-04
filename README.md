@@ -66,7 +66,7 @@ git push origin vX.Y.Z
 ```
 
 4. GitHub Actions workflow "Release templates" will run and publish a Release with the asset `flow-maestro-templates.zip` (contains `commands/`, `protocols/`, `templates/`).
-5. Verify the release and asset:
+5. Verify the release and asset (automation also runs an `uvx` smoke test and appends details to `RELEASE_LOG.md`):
 
 ```bash
 gh release view vX.Y.Z --repo ethras/flow-maestro --json assets,name,url
@@ -74,7 +74,7 @@ gh release view vX.Y.Z --repo ethras/flow-maestro --json assets,name,url
 
 ### Maintainer shortcut
 
-Use `scripts/create_release.py <version>` to automate version bumps, testing, tagging, pushes, and release verification. Pass `--skip-wait` if you only need the local updates without polling GitHub.
+Use `scripts/create_release.py <version>` to automate version bumps, testing, tagging, pushes, release verification, and a post-release `uvx --from ... flowm version` smoke test. The script also appends a summary entry to `RELEASE_LOG.md`. Pass `--skip-wait` if you only need the local updates without polling GitHub.
 
 6. Consumers can install/update using uv:
 

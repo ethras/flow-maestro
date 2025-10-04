@@ -16,6 +16,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PYPROJECT = REPO_ROOT / "pyproject.toml"
 INIT_FILE = REPO_ROOT / "src" / "flowm_cli" / "__init__.py"
 RELEASE_ASSET_NAME = "flow-maestro-templates.zip"
+RELEASE_LOG = REPO_ROOT / "RELEASE_LOG.md"
 
 
 def run(cmd: list[str], *, check: bool = True, capture_output: bool = False) -> subprocess.CompletedProcess:
@@ -81,9 +82,10 @@ def git_commit_and_tag(version: str, skip_push: bool) -> None:
     run(["git", "push", "origin", f"v{version}"])
 
 
-def wait_for_release(version: str, timeout: int, interval: int) -> None:
+def wait_for_release(version: str, timeout: int, interval: int) -> str:
     print(f"Waiting for GitHub release v{version}...")
     deadline = time.time() + timeout
+    time.sleep(min(5, interval))
     while time.time() < deadline:
         proc = run(
             [
@@ -106,12 +108,54 @@ def wait_for_release(version: str, timeout: int, interval: int) -> None:
             if asset_url:
                 print("Release is published:")
                 print(f" - {RELEASE_ASSET_NAME}: {asset_url}")
-                return
+                return asset_url
             print("Release found but asset not ready; retrying...")
         else:
-            sys.stderr.write(proc.stderr)
+            stderr = proc.stderr.strip()
+            if "Release not found" in stderr:
+                print("Release not yet available; retrying...")
+            elif stderr:
+                sys.stderr.write(stderr + "\n")
         time.sleep(interval)
     raise SystemExit(f"Release v{version} not visible after {timeout} seconds")
+
+
+def smoke_test_release(version: str) -> None:
+    target = f"git+https://github.com/ethras/flow-maestro.git@v{version}"
+    print(f"Running post-release smoke test via uvx for {target}...")
+    proc = run(
+        ["uvx", "--from", target, "flowm", "version"],
+        check=False,
+        capture_output=True,
+    )
+    if proc.returncode != 0:
+        if proc.stderr:
+            sys.stderr.write(proc.stderr)
+        raise SystemExit("Release smoke test failed.")
+    reported = proc.stdout.strip()
+    print(f"Smoke test CLI version: {reported}")
+    if reported != version:
+        raise SystemExit(f"Release smoke test mismatch: expected {version}, got {reported}")
+
+
+def print_release_summary(version: str, asset_url: str) -> None:
+    commit = run(["git", "rev-parse", "HEAD"], capture_output=True).stdout.strip()
+    print("Release summary:")
+    print(f" - version: {version}")
+    print(f" - commit: {commit}")
+    print(f" - asset: {asset_url}")
+    append_release_log(version, asset_url, commit)
+
+
+def append_release_log(version: str, asset_url: str, commit: str) -> None:
+    timestamp = time.strftime("%Y-%m-%d %H:%M:%S %Z", time.localtime())
+    entry = (
+        f"## v{version} — {timestamp}\n"
+        f"- commit: {commit}\n"
+        f"- asset: {asset_url}\n\n"
+    )
+    with RELEASE_LOG.open("a", encoding="utf-8") as fh:
+        fh.write(entry)
 
 
 def parse_args() -> argparse.Namespace:
@@ -139,6 +183,7 @@ def main() -> None:
     args = parse_args()
 
     ensure_tool("uv")
+    ensure_tool("uvx")
     ensure_tool("gh")
     ensure_tool("git")
 
@@ -147,8 +192,15 @@ def main() -> None:
     print(f"Version bumped {previous} -> {args.version}")
     run_tests(args.skip_tests)
     git_commit_and_tag(args.version, args.skip_push)
+
+    asset_url: str | None = None
     if not args.skip_wait and not args.skip_push:
-        wait_for_release(args.version, args.wait_timeout, args.wait_interval)
+        asset_url = wait_for_release(args.version, args.wait_timeout, args.wait_interval)
+
+    if asset_url:
+        smoke_test_release(args.version)
+        print_release_summary(args.version, asset_url)
+
     print("Release automation complete.")
 
 

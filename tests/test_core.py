@@ -3,8 +3,14 @@ import io
 import os
 import zipfile
 
-from importlib.machinery import SourceFileLoader
-core = SourceFileLoader("flowm_core", "src/flowm_cli/core.py").load_module()
+import importlib.util
+import sys
+
+_CORE_SPEC = importlib.util.spec_from_file_location("flowm_core", "src/flowm_cli/core.py")
+assert _CORE_SPEC and _CORE_SPEC.loader
+core = importlib.util.module_from_spec(_CORE_SPEC)
+sys.modules["flowm_core"] = core
+_CORE_SPEC.loader.exec_module(core)  # type: ignore[union-attr]
 
 
 def make_zip_from_dirs(zip_path: Path, src_root: Path):
@@ -62,4 +68,3 @@ def test_merge_backup_and_preserve(tmp_path: Path):
     r2 = core.merge_tree(incoming, target, preserve_local=True)
     assert "commands/file.md" in r2.conflicts_preserved
     assert (target / "commands" / "file.md.new").exists()
-
