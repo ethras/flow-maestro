@@ -74,7 +74,7 @@ gh release view vX.Y.Z --repo ethras/flow-maestro --json assets,name,url
 
 ### Maintainer shortcut
 
-Use `scripts/create_release.py <version>` to automate version bumps, testing, tagging, pushes, release verification, and a post-release `uvx --from ... flowm version` smoke test. The script also appends a summary entry to `RELEASE_LOG.md`. Pass `--skip-wait` if you only need the local updates without polling GitHub.
+Use `scripts/create_release.py <version>` to automate version bumps, testing, tagging, pushes, release verification, and a post-release `uvx --from ... flowm version` smoke test. The script also appends a summary entry to `RELEASE_LOG.md`. It polls GitHub every 10 seconds and times out after 120 seconds by default; pass `--skip-wait` if you only need the local updates without polling GitHub.
 
 6. Consumers can install/update using uv:
 

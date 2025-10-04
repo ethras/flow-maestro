@@ -167,14 +167,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--wait-timeout",
         type=int,
-        default=600,
-        help="Seconds to wait for release asset (default: 600)",
+        default=120,
+        help="Seconds to wait for release asset (default: 120)",
     )
     parser.add_argument(
         "--wait-interval",
         type=int,
-        default=30,
-        help="Seconds between release asset checks (default: 30)",
+        default=10,
+        help="Seconds between release asset checks (default: 10)",
     )
     return parser.parse_args()
 
