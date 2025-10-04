@@ -39,7 +39,7 @@ from .core import (
 )
 
 APP_NAME = "flowm"
-__version__ = "0.1.5"
+__version__ = "0.1.6"
 OWNER = os.getenv("FLOWM_REPO_OWNER", "ethras")
 REPO = os.getenv("FLOWM_REPO_NAME", "flow-maestro")
 
