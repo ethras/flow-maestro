@@ -11,16 +11,7 @@ argument-hint: (no arguments)
 
 ## Prerequisite: Install Flow Maestro assets
 
-Ensure the Flow Maestro assets are installed into `.flow-maestro/` in this repository:
-
-```bash
-# Install CLI once
-uv tool install flowm-cli --from git+https://github.com/ethras/flow-maestro.git
-flowm init --here
-
-# Or one-off without installing
-uvx --from git+https://github.com/ethras/flow-maestro.git flowm init --here
-```
+Ensure the Flow Maestro assets are installed into `.flow-maestro/` in this repository. If the directory is missing, sync the project assets following the maintainer guidelines before continuing.
 
 After installation, the structure will include:
 
