@@ -1,5 +1,5 @@
 {
-  "asset": "https://github.com/ethras/flow-maestro/releases/download/v0.1.1/flow-maestro-templates.zip",
+  "asset": "https://github.com/ethras/flow-maestro/releases/download/v0.1.5/flow-maestro-templates.zip",
   "files": [
     {
       "path": "commands/code_review.md",
@@ -18,8 +18,8 @@
     },
     {
       "path": "commands/onboarding.md",
-      "sha256": "28bede160f639906c5758bbc5637c157b3eee828dfc5231a671c2ddf741f3533",
-      "size": 4096
+      "sha256": "f7aef6697056ed3b2e1bb24fab11cfc93fc30994e385703c5e5952c642200ee7",
+      "size": 4761
     },
     {
       "path": "commands/resume.md",
@@ -67,6 +67,6 @@
       "size": 8241
     }
   ],
-  "installed_at": "2025-10-03T15:27:36.866134+00:00",
-  "version": "v0.1.1"
+  "installed_at": "2025-10-04T11:22:25.317372+00:00",
+  "version": "v0.1.5"
 }

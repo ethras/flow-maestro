@@ -39,7 +39,7 @@ from .core import (
 )
 
 APP_NAME = "flowm"
-__version__ = "0.1.3"
+__version__ = "0.1.5"
 OWNER = os.getenv("FLOWM_REPO_OWNER", "ethras")
 REPO = os.getenv("FLOWM_REPO_NAME", "flow-maestro")
 
@@ -243,4 +243,3 @@ def main():  # entry point
 
 if __name__ == "__main__":
     main()
-
