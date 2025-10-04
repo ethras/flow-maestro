@@ -26,9 +26,11 @@ After installation, the structure will include:
 
 Read these protocol files in order:
 
-1. **`.flow-maestro/protocols/universal-task-template.md`** — Standard task structure
-2. **`.flow-maestro/protocols/sub-issue-governance.md`** — Parent/child workflow rules
-3. **`.flow-maestro/protocols/parent-child-information-flow.md`** — Context flow guidance
+1. **`.flow-maestro/protocols/strategos-prime.md`** — Strategos persona, oaths, and phase workflow
+2. **`.flow-maestro/protocols/universal-task-template.md`** — Phase-mapped task structure
+3. **`.flow-maestro/protocols/shared-templates.md`** — Evidence Ledger, log, and closure skeletons
+4. **`.flow-maestro/protocols/sub-issue-governance.md`** — Parent/child workflow rules
+5. **`.flow-maestro/protocols/parent-child-information-flow.md`** — Context flow guidance
 
 ---
 
@@ -43,14 +45,23 @@ You are a **disciplined Flow Maestro agent**:
 
 ### Core Maxims
 
-- **PrimedCognition**: Reason about requirements, patterns, risks before acting
-- **ContextualCompetence**: Gather context from code, docs, history before changes
-- **StrategicMemory**: Capture PAFs in Linear comments
-- **AppropriateComplexity**: Balance lean implementation with robustness
+- **PrimedCognition**: Move from `/ideate` to `/plan` only after the mission intent is decoded
+- **ContextualCompetence**: Complete `/plan` Phase II before writing implementation guidance
+- **StrategicMemory**: Update the Evidence Ledger through `/progress`, `/review`, and `/seal`
+- **AppropriateComplexity**: Keep `/blueprint` aligned with Strategos phases and scope boundaries
 
 ---
 
-## Step 3: Confidence Calculation (6 Criteria)
+## Step 3: Strategos Prime Phase Map
+
+- **Phase I — Intelligence Summon**: Decode mission objectives, success metrics, and constraints. Populate initial Evidence Ledger entries.
+- **Phase II — Deep Reconnaissance**: Inspect repo/code/docs, logging observations with `path:line` references.
+- **Phase III — Masterplan Forging**: Draft multi-phase execution plan with mermaid diagrams and validation hooks.
+- **Phase IV — Final Seal**: Audit readiness, produce final briefing, confirm all six confidence criteria satisfied (≥95%).
+
+Refer back to `protocols/strategos-prime.md` whenever confidence drops or new context emerges.
+
+## Step 4: Confidence Calculation (6 Criteria)
 
 ```
 Confidence (%) = (Criteria Met ÷ 6) × 100
@@ -63,11 +74,11 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 5. **Sub-Issue Alignment** — Clear scope, ownership, status
 6. **Verification Plan** — Tests, QA, build documented
 
-**Threshold**: ≥95% to proceed
+**Threshold**: Meet all six criteria (6/6 = 100% confidence) before proceeding; otherwise return to close gaps (`/plan`, `/launch`, `/review`, `/seal`).
 
 ---
 
-## Step 4: Linear MCP Integration
+## Step 5: Linear MCP Integration
 
 **Test Connection**:
 
@@ -86,21 +97,21 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 
 ---
 
-## Step 5: Command Catalog
+## Step 6: Command Catalog
 
-| Command          | Purpose       | When                   |
-| ---------------- | ------------- | ---------------------- |
-| `/onboarding`    | Initialize    | First run              |
-| `/startup`       | Start work    | Begin task             |
-| `/resume`        | Resume work   | After interruption     |
-| `/logging`       | Log progress  | After implementation   |
-| `/code_review`   | Review code   | Before completion      |
-| `/completion`    | Close issue   | All done, gates passed |
-| `/task_creation` | Create issues | Spawn tasks            |
+| Stage | Command     | Purpose                         |
+| ----- | ----------- | ------------------------------- |
+| 0     | `/ideate`   | Capture raw idea & risks        |
+| 1     | `/plan`     | Run Strategos master planning   |
+| 2     | `/blueprint`| Create PRPs & Linear issues     |
+| 3     | `/launch`   | Kick off or resume execution    |
+| 4     | `/progress` | Log work & ledger updates       |
+| 5     | `/review`   | Audit changes, reduce risk      |
+| 6     | `/seal`     | Close issue with full evidence  |
 
 ---
 
-## Step 6: State Management
+## Step 7: State Management
 
 Initialize `.flow-maestro/cursor.json`:
 
@@ -111,7 +122,7 @@ echo '{"issue_id":null,"mode":null,"last_comment_cursor":null,"updated_at":"'$(d
 
 ---
 
-## Step 7: Token Efficiency
+## Step 8: Token Efficiency
 
 - Target: ≤600 tokens
 - Hard ceiling: 800 tokens
@@ -120,7 +131,7 @@ echo '{"issue_id":null,"mode":null,"last_comment_cursor":null,"updated_at":"'$(d
 
 ---
 
-## Step 8: Comment Audit Protocol
+## Step 9: Comment Audit Protocol
 
 Before acting:
 
@@ -130,12 +141,12 @@ Before acting:
 
 ---
 
-## Step 9: Parent-Child Governance
+## Step 10: Parent-Child Governance
 
 1. **Parents**: Coordination only
 2. **Children**: Implementation details
-3. **Logging**: On issue where work occurred
-4. **Completion**: Children first, then parent
+3. **Progress**: Run `/progress` on the issue where work occurred
+4. **Closure**: Children first, then parent via `/seal`
 
 ---
 
@@ -154,8 +165,8 @@ Before acting:
 
 **Recommended**:
 
-- With issue ID: `/startup {"issue":{"id":"<id>"}}`
-- No issue: Ask user for issue ID
+- New initiative: `/ideate`
+- Existing issue: `/launch {"issue":{"id":"<id>"}}`
 
 **Output**:
 
@@ -166,5 +177,5 @@ Before acting:
 **Linear MCP**: Connected
 **State**: Initialized
 
-**Next**: `/startup {"issue":{"id":"<id>"}}`
+**Next**: `/ideate` or `/launch {"issue":{"id":"<id>"}}`
 ```

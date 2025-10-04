@@ -6,10 +6,12 @@ This protocol guides agents on interpreting parent/child data provided by the se
 - [Parent → Child Flow](#parent--child-flow)
 - [Child → Parent Notifications](#child--parent-flow)
 - [Parent Completion Aggregation](#parent-completion-with-child-aggregation)
-- [Parent Startup Enumeration](#parent-startup-with-child-activity)
+- [Parent Launch Enumeration](#parent-launch-with-child-activity)
 
 ## Core Principle
 **Server provides data structure, agent provides semantic interpretation.**
+
+> **Strategos Alignment**: Parent/child coordination must reference the Evidence Ledger defined in `protocols/strategos-prime.md`. During Phase II (Deep Reconnaissance), capture cross-issue observations; during Phase IV (Final Seal), summarise child outcomes with ledger citations.
 
 The server fetches and structures parent/child information from Linear. The agent interprets this data, extracts relevant context, and decides what information to propagate between parent and child issues.
 
@@ -102,7 +104,7 @@ You must decide if parent notification is warranted based on significance:
 
 ### Parent Notification Format
 
-When parent notification is warranted, call `logging` tool for the parent issue with this format:
+When parent notification is warranted, call the `/progress` command (targeting the parent issue) with this format:
 
 ```markdown
 ## 🔗 Child Update: ${child.identifier}
@@ -197,7 +199,7 @@ You must aggregate child completions into parent Final Completion Summary:
 
 ---
 
-## Parent Startup with Child Activity
+## Parent Launch with Child Activity
 
 ### Data Provided by Server
 
@@ -223,7 +225,7 @@ You must enumerate all children before deciding coordination actions:
 ```
 
 **Review blocked children**:
-- If `has_blocker: true`, call startup on that child to review blocker details
+- If `has_blocker: true`, run `/launch {"issue":{"id":"<child-id>","mode":"resume"}}` to review blocker details
 - Assess if blocker requires parent-level coordination
 - Document coordination plan in parent work log
 
@@ -294,7 +296,7 @@ Information that should live on child issues:
 1. Enumerate children using `data.child_activity`
 2. Assess blocked children
 3. Select child to work on
-4. Call `startup` on selected child
+4. Call `/launch` on selected child
 
 **On Child**: 
 1. Review `data.parent_snapshot`
@@ -373,7 +375,7 @@ Information that should live on child issues:
 
 ## Quick Reference
 
-### Child Startup with Parent Context
+### Child Launch with Parent Context
 
 ```markdown
 1. Review `data.parent_snapshot.comments` (newest → oldest)
@@ -401,12 +403,12 @@ Information that should live on child issues:
 4. Reference all children in Final Completion Summary
 ```
 
-### Parent Startup with Child Enumeration
+### Parent Launch with Child Enumeration
 
 ```markdown
 1. Review `data.child_activity` (all children)
 2. Enumerate: identifier + state + last_activity + has_blocker
-3. Review blocked children (call startup if coordination needed)
+3. Review blocked children (run `/launch` if coordination needed)
 4. Plan: which child to work on next, dependencies, cross-cutting work
 ```
 
@@ -415,7 +417,7 @@ Information that should live on child issues:
 ## Related Protocols
 
 - **sub-issue-governance** protocol: Complete parent/child workflow rules and discipline
-- **task-startup** protocol: Startup protocol with parent/child context sections
-- **logging** protocol: Logging protocol with parent notification guidance
+- **task-launch** protocol: Launch protocol with parent/child context sections
+- **/progress** protocol: Logging protocol with parent notification guidance
 - **task-completion** protocol: Completion protocol with child aggregation guidance
 - **universal-agent** protocol: Core agent principles including information flow

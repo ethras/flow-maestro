@@ -1,57 +1,55 @@
 ---
-title: Shared Linear Comment Templates
-description: Reusable snippets for Flow Maestro commands
+title: Shared Strategos Templates
+description: Reusable snippets aligned with the Strategos Prime workflow
 ---
 
-# Shared Comment Templates
+# Shared Strategos Templates
 
-## Confidence Checklist
-- ✅ Success Criteria Clarity (cite Linear evidence)
-- ✅ Integration Points Documented
-- ✅ Pattern Consistency Verified
-- ✅ Risk Mitigation Planned
-- ✅ Sub-Issue Alignment Confirmed
-- ✅ Verification Plan Ready
+> Used primarily by `/progress`, `/review`, and `/seal` to keep the Evidence Ledger and reporting artifacts aligned with Strategos phases.
 
-> Use this checklist whenever a command asks you to report confidence. If the environment is read-only, note "cursor pending (read-only env)" instead of attempting to update `.flow-maestro/cursor.json`.
+## Confidence Checklist (6 Criteria)
 
-## Final Completion Summary Skeleton
-```
-## Final Completion Summary
+Use this after every Phase review. Confidence gates require meeting all six criteria (6/6 = 100% confidence); anything less pauses advancement until remediated.
 
-**Implemented**:
-- Item
+- ✅ **Success Criteria Clarity** — Acceptance tests measurable (`path:line`).
+- ✅ **Integration Points Documented** — Up/downstream touchpoints cited.
+- ✅ **Pattern Consistency Verified** — Existing implementations referenced.
+- ✅ **Risk Mitigation Planned** — Hazards paired with mitigations or owners.
+- ✅ **Sub-Issue Alignment Confirmed** — Parent/child scope reconciled.
+- ✅ **Verification Plan Ready** — Automated + manual checks defined.
 
-**Verification**:
-- Lint: PASS
-- Test: PASS
-- Build: PASS
+> Read-only environments must note `cursor pending (read-only env)` instead of writing `.flow-maestro/cursor.json`.
 
-**Code Review**:
-- Reviewer | Date | Outcome
+## Evidence Ledger Snippet
 
-**Artifacts**:
-- PR/Commit references
+Embed this table in planning outputs, work logs, or completion notes.
 
-**Risks/Follow-ups**:
-- Outstanding items or tracked issues
-
-**Handoff**: Next steps or owner
+```markdown
+## Evidence Ledger
+| Type | Detail | Source |
+| ---- | ------ | ------ |
+| Observation | Existing deploy command uses `uv run flowm` | `README.md#Development` |
+| Risk | Legacy script fails on macOS (needs validation) | UNKNOWN |
+| Dependency | Requires secrets from Vault path `ops/flow` | External |
+| Decision | Follow logging pattern in `src/flowm_cli/logger.py:18` | `src/flowm_cli/logger.py:18` |
 ```
 
-> Reference this template from completion workflows instead of embedding copies in multiple commands.
+## Work Log Update Skeleton (Phase IV)
 
-## Work Log Update Skeleton
-```
+```markdown
 ## Work Log Update - YYYY-MM-DD HH:MM - (Agent)
 
+**Phase Focus**: <I/II/III/IV>
 **Status**: Current state
 
-**Actions**:
-- Key work since last update
+**Evidence Additions**:
+- Observation: … (`path:line`)
 
-**Findings**:
-- Discoveries, decisions, or measurements
+**Actions**:
+- Key work since last log
+
+**Findings / Decisions**:
+- Risks surfaced, mitigations chosen
 
 **Blockers**:
 - Note if any; otherwise "None"
@@ -62,4 +60,54 @@ description: Reusable snippets for Flow Maestro commands
 **Posted to Linear**: ISSUE-ID (timestamp)
 ```
 
-> Keep the work log under 600 tokens; link to detailed artifacts rather than duplicating large diffs.
+> Keep logs ≤600 tokens; link to detailed artifacts rather than embedding diffs.
+
+## Final Completion Summary Skeleton (Phase IV)
+
+```markdown
+## Final Completion Summary
+
+**Implemented**:
+- …
+
+**Verification**:
+- Lint: PASS/FAIL (evidence)
+- Test: PASS/FAIL (command)
+- Build: PASS/FAIL
+- Manual QA: Result + scenario
+
+**Confidence**: 100% (6/6 criteria)
+- Notes per criterion referencing evidence
+
+**Artifacts**:
+- PR/Commit links, dashboards, runbooks
+
+**Risks & Follow-ups**:
+- Outstanding items or tracked issues
+
+**Handoff**:
+- Ownership transfer instructions
+```
+
+## Context Review Summary (Phase II)
+
+```markdown
+## Context Review Summary — YYYY-MM-DD HH:MM
+
+**Mission Decode**:
+- Objective + constraints
+
+**Recon Highlights**:
+- Key Observations (ledger references)
+
+**Risks / Unknowns**:
+- Item → Mitigation / Owner
+
+**Confidence**: <value> (criteria list)
+
+**Next Phase**: Masterplan Forging / Additional Recon
+```
+
+---
+
+Reference `protocols/strategos-prime.md` for the full doctrine and phase expectations.
