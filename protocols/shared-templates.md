@@ -60,7 +60,7 @@ Embed this table in planning outputs, work logs, or completion notes.
 **Posted to Linear**: ISSUE-ID (timestamp)
 ```
 
-> Keep logs ≤600 tokens; link to detailed artifacts rather than embedding diffs.
+> Keep logs ≤600 tokens; link to detailed artifacts rather than embedding diffs. Render quickly with `uv run python scripts/autopost.py progress-log --set timestamp=...`.
 
 ## Final Completion Summary Skeleton (Phase IV)
 
@@ -110,4 +110,4 @@ Embed this table in planning outputs, work logs, or completion notes.
 
 ---
 
-Reference `protocols/strategos-prime.md` for the full doctrine and phase expectations.
+Reference `protocols/strategos-prime.md` for the full doctrine and phase expectations. Macro renderers live in `templates/linear-macros/`; call `scripts/autopost.py` to populate them before posting.

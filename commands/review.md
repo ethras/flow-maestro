@@ -1,11 +1,13 @@
 ---
 description: Perform evidence-backed code review with risk tracking
-argument-hint: {"issue":{"id":"<issue-id>"}}
+argument-hint: {"issue":{"id":"<issue-id>"},"autopost":true}
 ---
 
 # `/review` — Stage 5: Quality Audit
 
 Use `/review` once implementation reaches a checkpoint. The objective is to reduce residual risk and validate readiness for `/seal`.
+
+> **Autopost default**: `/review` assumes publishing is required. Only set `autopost=false` for exploratory dry-runs; otherwise, the review comment must reach Linear before proceeding.
 
 ## Strategos Alignment
 
@@ -29,12 +31,14 @@ Use `/review` once implementation reaches a checkpoint. The objective is to redu
    - Update the ledger per finding (`path:line`, severity, mitigation owner).
    - Cross-reference Strategos patterns to ensure consistency.
 
-4. **Publish Review**
-   - `create_comment_linear(issueId: "<issue-id>", body: "<review>")`
-   - Structure comment by severity, include actionable fixes, and cite files.
+4. **Autopost Review Comment**
+   - Verify auth with `get_user_linear(query: "me")` if not already cached.
+   - Unless `autopost` is `false`, publish immediately after drafting using `uv run python scripts/autopost.py review-report --set issue_key=FM-123 --set timestamp=...`.
+   - Execute `create_comment_linear(issueId: "<issue-id>", body: "<review>")`; log the timestamp in the Evidence Ledger.
+   - On failure, set `cursor.pending_post = true`, capture the error, and retry before seal.
 
 5. **Cursor Update**
-   - Reflect the latest review status in `.flow-maestro/cursor.json` (or note read-only).
+   - Reflect the latest review status in `.flow-maestro/cursor.json` (`pending_post` flag cleared once comment posts; otherwise note retry plan and block `/seal`).
 
 ## Output Skeleton
 
@@ -63,9 +67,8 @@ Status: ❌ BLOCKED — Resolve 🔴 Critical issue
 ## Validation Checklist
 
 - [ ] Ledger captures all findings with severity + owners
-- [ ] Review comment posted to Linear with actionable guidance
+- [ ] Review comment autoposted (or `pending_post` recorded with immediate retry plan)
 - [ ] Confidence recalculated (≥95% to proceed)
 - [ ] Cursor updated / read-only noted
 
 **Next**: `/progress` for remediation or `/seal` if all findings cleared.
-
