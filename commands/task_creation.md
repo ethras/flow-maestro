@@ -5,13 +5,52 @@ argument-hint: {"task_details":{"title":"<title>","description":"<template>","pr
 
 # `/task_creation` — Create Linear Issues
 
+## Pre-Draft Planning Checklist
+
+Run a structured planning pass before writing anything into the universal template. Capture these checkpoints in your scratchpad or Linear draft so downstream agents inherit the thinking:
+
+1. **Observations** – Cite verified facts (repo paths, existing patterns, stakeholder notes). Example: `apps/web/nx-zero.config.ts` already defines deployment targets.
+2. **Key Findings** – Enumerate risks, unknowns, dependencies blocking scope clarity. If anything critical remains unresolved, pause and gather data before proceeding.
+3. **Approach** – Describe the implementation strategy in 2-3 bullet points, calling out defensive considerations and alignment with shared protocols.
+4. **Proposed File Changes** – List targeted files/modules with planned modifications. Include justifications that tie back to observed patterns.
+5. **Verification Notes** – Document tests, build steps, and manual QA you will require. Flag open TODOs that need follow-up ownership.
+
+Only continue to the Linear MCP workflow after you are ≥95% confident each section above is complete and consistent.
+
 ## Linear MCP Workflow
 
 1. **Draft Task**: Use universal task template (see `protocols/universal-task-template.md`)
-   - **Summary**: One-sentence WHAT and WHY
-   - **Success Criteria**: Measurable acceptance criteria
-   - **Impacted Modules**: List affected components
-   - **Verification Plan**: How to verify completion
+   - Paste the planning checklist output into the matching sections (`Observations`, `Key Findings`, `Approach`, `Proposed File Changes`, `Verification Notes`).
+   - Translate planning notes → Template summary blocks:
+     - **Summary**: Condense the Approach’s primary objective and rationale.
+     - **Success Criteria**: Promote Key Findings into measurable acceptance checks (include mitigation items where applicable).
+     - **Impacted Modules**: Pull from Proposed File Changes (paths, services, shared libs).
+     - **Verification Plan**: Copy Verification Notes, refined into lint/test/QA tasks.
+
+   Example:
+
+   ```markdown
+   ## Observations
+   - `apps/web/nx-zero.config.ts` already defines deployment targets
+   - Prior HR features wrap create/edit buttons with `HasPermission`
+
+   ## Key Findings
+   - No permission checks on entities/items CRUD → add guards before exposing buttons
+   - Deployment flow depends on auth store permissions array
+
+   ## Approach
+   - Layered defense: UI gating, handler guards, mutation checks
+   - Mirror HR feature patterns for consistency
+
+   ## Proposed File Changes
+   - `features/entities/pages/ListPage.tsx`: wrap create button with permission check
+   - `features/entities/components/forms/EntityFormModal.tsx`: guard onCreate/onUpdate
+
+   ## Verification Notes
+   - Automated: `pnpm test --filter permissions` (or equivalent)
+   - Manual: attempt CRUD with/without permissions in staging seed account
+   - TODO: Confirm copy translations with Product before release
+   ```
 
 2. **Create Issue**: `create_issue_linear(team: "<team-key>", project: "<project-key>", title: "...", description: "...", ...)`
    - Required keys for `task_details`: `title`, `description`, `priority`, `team`, `project`
