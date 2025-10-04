@@ -46,6 +46,7 @@ Supporting protocols (`strategos-prime.md`, `universal-task-template.md`, `share
 ## Release packaging
 
 On each git tag (vX.Y.Z), the workflow builds `flow-maestro-templates.zip` containing `commands/`, `protocols/`, and `templates/` and publishes it as a Release asset.
+The bundle also includes `scripts/autopost.py` to render Linear comment macros alongside the shipped templates.
 
 ## Notes
 
