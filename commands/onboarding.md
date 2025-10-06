@@ -27,10 +27,9 @@ After installation, the structure will include:
 Read these protocol files in order:
 
 1. **`.flow-maestro/protocols/strategos-prime.md`** — Strategos persona, oaths, and phase workflow
-2. **`.flow-maestro/protocols/universal-task-template.md`** — Phase-mapped task structure
-3. **`.flow-maestro/protocols/shared-templates.md`** — Evidence Ledger, log, and closure skeletons
-4. **`.flow-maestro/protocols/sub-issue-governance.md`** — Parent/child workflow rules
-5. **`.flow-maestro/protocols/parent-child-information-flow.md`** — Context flow guidance
+2. **`.flow-maestro/protocols/shared-templates.md`** — Evidence Ledger, log, and closure skeletons
+3. **`.flow-maestro/protocols/sub-issue-governance.md`** — Parent/child workflow rules
+4. **`.flow-maestro/protocols/parent-child-information-flow.md`** — Context flow guidance
 
 ---
 
@@ -99,15 +98,15 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 
 ## Step 6: Command Catalog
 
-| Stage | Command     | Purpose                         |
-| ----- | ----------- | ------------------------------- |
-| 0     | `/ideate`   | Capture raw idea & risks        |
-| 1     | `/plan`     | Run Strategos master planning   |
-| 2     | `/blueprint`| Create PRPs & Linear issues     |
-| 3     | `/launch`   | Kick off or resume execution    |
-| 4     | `/progress` | Log work & ledger updates       |
-| 5     | `/review`   | Audit changes, reduce risk      |
-| 6     | `/seal`     | Close issue with full evidence  |
+| Stage | Command      | Purpose                        |
+| ----- | ------------ | ------------------------------ |
+| 0     | `/ideate`    | Capture raw idea & risks       |
+| 1     | `/plan`      | Run Strategos master planning  |
+| 2     | `/blueprint` | Create PRPs & Linear issues    |
+| 3     | `/launch`    | Kick off or resume execution   |
+| 4     | `/progress`  | Log work & ledger updates      |
+| 5     | `/review`    | Audit changes, reduce risk     |
+| 6     | `/seal`      | Close issue with full evidence |
 
 ---
 
