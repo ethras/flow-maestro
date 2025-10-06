@@ -48,7 +48,7 @@ def test_merge_add_and_manifest(tmp_path: Path):
     assert "commands/onboarding.md" in paths
 
 
-def test_merge_backup_and_preserve(tmp_path: Path):
+def test_merge_overwrite_and_preserve(tmp_path: Path):
     # Existing target with a file
     target = tmp_path / ".flow-maestro"
     os.makedirs(target / "commands", exist_ok=True)
@@ -59,9 +59,10 @@ def test_merge_backup_and_preserve(tmp_path: Path):
     os.makedirs(incoming / "commands", exist_ok=True)
     (incoming / "commands" / "file.md").write_text("new\n")
 
-    # Backup path when not preserve
+    # Overwrite path when not preserve; no backups written
     r1 = core.merge_tree(incoming, target, preserve_local=False)
-    assert "commands/file.md" in r1.backed_up
+    assert "commands/file.md" in r1.overwritten
+    assert not (target / ".backup").exists()
 
     # Modify target again and test preserve_local
     (target / "commands" / "file.md").write_text("local change\n")

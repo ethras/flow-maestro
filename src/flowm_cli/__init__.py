@@ -155,7 +155,7 @@ def init(
         report = merge_tree(content_dir, target, dry_run=dry_run, preserve_local=preserve_local, force=force)
 
     if dry_run:
-        console.print(Panel(f"Dry run complete. Added: {len(report.added)}, Overwritten: {len(report.overwritten)}, Backed up: {len(report.backed_up)}, Preserved: {len(report.conflicts_preserved)}", title="Dry Run"))
+        console.print(Panel(f"Dry run complete. Added: {len(report.added)}, Overwritten: {len(report.overwritten)}, Preserved: {len(report.conflicts_preserved)}", title="Dry Run"))
         raise typer.Exit(0)
 
     # Write metadata
@@ -164,7 +164,7 @@ def init(
     save_manifest(target, manifest)
     ensure_readme(target)
 
-    console.print(Panel(f"Installed Flow Maestro {tag} to {target}\nAdded: {len(report.added)} | Overwritten: {len(report.overwritten)} | Backed up: {len(report.backed_up)} | Preserved: {len(report.conflicts_preserved)}", title="Success", border_style="green"))
+    console.print(Panel(f"Installed Flow Maestro {tag} to {target}\nAdded: {len(report.added)} | Overwritten: {len(report.overwritten)} | Preserved: {len(report.conflicts_preserved)}", title="Success", border_style="green"))
 
 
 @app.command()

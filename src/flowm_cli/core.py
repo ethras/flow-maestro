@@ -18,7 +18,6 @@ from typing import Dict, List, Tuple
 ASSET_NAME = "flow-maestro-templates.zip"
 MANIFEST_NAME = "MANIFEST.json"
 VERSION_NAME = "VERSION"
-BACKUP_DIRNAME = ".backup"
 
 
 def ensure_dir(p: Path) -> None:
@@ -70,12 +69,7 @@ def read_version(target_dir: Path) -> str | None:
 class MergeReport:
     added: List[str]
     overwritten: List[str]
-    backed_up: List[str]
     conflicts_preserved: List[str]
-
-
-def _timestamp() -> str:
-    return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
 def merge_tree(src_dir: Path, dest_dir: Path, *, dry_run: bool = False, preserve_local: bool = False, force: bool = False) -> MergeReport:
@@ -83,14 +77,11 @@ def merge_tree(src_dir: Path, dest_dir: Path, *, dry_run: bool = False, preserve
     - If dest missing: add
     - If dest exists and different:
       - preserve_local: write .new beside existing
-      - else: backup then overwrite
+      - else: overwrite destination in place
     Returns a MergeReport with relative paths from dest_dir.
     """
     ensure_dir(dest_dir)
-    report = MergeReport(added=[], overwritten=[], backed_up=[], conflicts_preserved=[])
-
-    # Prepare backup root per operation
-    backup_root = dest_dir / BACKUP_DIRNAME / _timestamp()
+    report = MergeReport(added=[], overwritten=[], conflicts_preserved=[])
 
     for sp in list_files(src_dir):
         rel = relpath(sp, src_dir)
@@ -124,24 +115,10 @@ def merge_tree(src_dir: Path, dest_dir: Path, *, dry_run: bool = False, preserve
                 shutil.copy2(sp, newp)
             report.conflicts_preserved.append(rel)
         else:
-            # Backup and overwrite
+            # Overwrite in place without backups
             if not dry_run:
-                ensure_dir(backup_root / dp.parent.relative_to(dest_dir))
-                shutil.copy2(dp, backup_root / rel)
                 shutil.copy2(sp, dp)
-            report.backed_up.append(rel)
             report.overwritten.append(rel)
-
-    # Write backup summary
-    if (report.backed_up or report.conflicts_preserved) and not dry_run:
-        ensure_dir(backup_root)
-        summary = [
-            f"Backups: {len(report.backed_up)}",
-            *[f"B {p}" for p in sorted(report.backed_up)],
-            f"Preserved (.new): {len(report.conflicts_preserved)}",
-            *[f"P {p}" for p in sorted(report.conflicts_preserved)],
-        ]
-        (backup_root / "SUMMARY.md").write_text("\n".join(summary) + "\n")
 
     return report
 
@@ -150,9 +127,6 @@ def compute_manifest(target_dir: Path, *, version: str, asset_url: str | None) -
     files = []
     for f in list_files(target_dir):
         if f.name in {MANIFEST_NAME, VERSION_NAME}:
-            continue
-        if BACKUP_DIRNAME in f.parts and BACKUP_DIRNAME in f.parents:
-            # skip backup contents
             continue
         files.append({
             "path": relpath(f, target_dir),
@@ -221,4 +195,3 @@ def ensure_readme(target_dir: Path) -> None:
     readme.write_text(
         "Flow Maestro assets installed here. Do not edit generated files unless you know what you're doing.\n"
     )
-
