@@ -13,9 +13,10 @@ argument-hint: (no arguments)
 
 Read these protocol files in order:
 
-1. **`protocols/universal-task-template.md`** — Standard task structure
-2. **`protocols/sub-issue-governance.md`** — Parent/child workflow rules
-3. **`protocols/parent-child-information-flow.md`** — Context flow guidance
+1. **`protocols/sub-issue-governance.md`** — Parent/child workflow rules
+2. **`protocols/parent-child-information-flow.md`** — Context flow guidance
+
+> Universal task template onboarding happens during `/task_creation`.
 
 ---
 
