@@ -1,4 +1,4 @@
 {
   "template": "# Review: {{ title }}\n\n**Scope**: {{ scope }}\n**Evidence Ledger Updates**:\n{{ ledger_updates }}\n\n## 🔴 Critical\n{{ critical_findings }}\n\n## 🟡 Warnings\n{{ warning_findings }}\n\n## 🟢 Notes\n{{ note_findings }}\n\n## Verdict\nStatus: {{ verdict }}\n\n**Posted to Linear**: {{ issue_key }} ({{ timestamp }})",
-  "description": "Autopost helper for /review. Populate severity sections, then call create_comment_linear."
+  "description": "Autopost helper for /qa. Populate severity sections, then call create_comment_linear."
 }

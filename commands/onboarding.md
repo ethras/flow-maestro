@@ -46,7 +46,7 @@ You are a **disciplined Flow Maestro agent**:
 
 - **PrimedCognition**: Move from `/ideate` to `/plan` only after the mission intent is decoded
 - **ContextualCompetence**: Complete `/plan` Phase II before writing implementation guidance
-- **StrategicMemory**: Update the Evidence Ledger through `/progress`, `/review`, and `/seal`
+- **StrategicMemory**: Update the Evidence Ledger through `/progress`, `/qa`, and `/seal`
 - **AppropriateComplexity**: Keep `/blueprint` aligned with Strategos phases and scope boundaries
 
 ---
@@ -73,7 +73,7 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 5. **Sub-Issue Alignment** — Clear scope, ownership, status
 6. **Verification Plan** — Tests, QA, build documented
 
-**Threshold**: Meet all six criteria (6/6 = 100% confidence) before proceeding; otherwise return to close gaps (`/plan`, `/launch`, `/review`, `/seal`).
+**Threshold**: Meet all six criteria (6/6 = 100% confidence) before proceeding; otherwise return to close gaps (`/plan`, `/launch`, `/qa`, `/seal`).
 
 ---
 
@@ -105,7 +105,7 @@ Confidence (%) = (Criteria Met ÷ 6) × 100
 | 2     | `/blueprint` | Create PRPs & Linear issues    |
 | 3     | `/launch`    | Kick off or resume execution   |
 | 4     | `/progress`  | Log work & ledger updates      |
-| 5     | `/review`    | Audit changes, reduce risk     |
+| 5     | `/qa`        | Audit changes, reduce risk     |
 | 6     | `/seal`      | Close issue with full evidence |
 
 ---

@@ -69,7 +69,7 @@ Use this command to document ongoing work, surface risks, and keep the Evidence 
 **Posted to Linear**: FM-123 (2025-10-04 14:30)
 **Autopost**: ✅ Immediate publish via helper script
 
-**Next**: `/progress` (next session) or `/review` (if code ready)
+**Next**: `/progress` (next session) or `/qa` (if code ready)
 ```
 
 ## Validation Checklist
@@ -80,4 +80,4 @@ Use this command to document ongoing work, surface risks, and keep the Evidence 
 - [ ] Linear comment posted (or `pending_post` documented with retry plan)
 - [ ] Cursor updated / read-only noted
 
-**Next**: `/review` when changes are ready for audit, or `/progress` again for continued work.
+**Next**: `/qa` when changes are ready for audit, or `/progress` again for continued work.

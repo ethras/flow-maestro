@@ -132,7 +132,7 @@ Multi-component authentication system split across 3 sub-issues.
 1. Complete implementation work on the sub-issue.
 2. Run quality gates (lint/test/build) and record results.
 3. Post a final `/progress` log summarizing outcomes.
-4. Execute `/review` and resolve all 🔴 findings.
+4. Execute `/qa` and resolve all 🔴 findings.
 5. Call `/seal {"issue":{"id":"<child-id>"}}` and ensure the Evidence Ledger is clear.
 6. Record the seal timestamp in sub-issue comments.
 
@@ -151,7 +151,7 @@ Multi-component authentication system split across 3 sub-issues.
    **Verification**:
    - All child quality gates satisfied
    - Integration tests across components: PASS
-   - Security review: PASS (see `/review` comment 2024-01-15 17:30)
+   - Security review: PASS (see `/qa` comment 2024-01-15 17:30)
    ```
 4. Execute `/seal {"issue":{"id":"<parent-id>"}}`, citing child summaries and Evidence Ledger closure.
 
@@ -241,7 +241,7 @@ Parents must block sealing if any child lacks a `/seal` record or remains non-te
 4. Call `/launch` on that child before proceeding
 
 ### When Sealing Work
-1. Complete each child individually (quality gates + review)
+1. Complete each child individually (quality gates + QA)
 2. Only after ALL children are sealed, prepare the parent seal
 3. Parent seal must reference all child seal timestamps
 
@@ -281,7 +281,7 @@ Copying technical context from child to parent or vice versa.
 |------|----------------------|---------------------|
 | **launch** | Warns about sub-issues, provides governance protocol | Normal launch flow (start/resume) |
 | **progress** | Context-aware guidance: "log coordination only" | Context-aware guidance: "log all detail" |
-| **review** | Audits cross-cutting risk alignment | Reviews child implementation |
+| **qa** | Audits cross-cutting risk alignment | Reviews child implementation |
 | **seal** | BLOCKS if children non-terminal | Normal closure flow |
 
 ## Success Criteria
@@ -311,7 +311,7 @@ launch({ issue: { id: "<child-id>", mode: "start" } })
 - Format: "See FM-123 (timestamp) for X"
 
 **Sealing a child**:
-- Quality gates → `/review` → Final `/progress` log → `/seal`
+- Quality gates → `/qa` → Final `/progress` log → `/seal`
 
 **Sealing a parent**:
 - Verify all children sealed → Reference child seals → `/seal`

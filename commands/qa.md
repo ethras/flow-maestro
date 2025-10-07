@@ -1,13 +1,13 @@
 ---
-description: Perform evidence-backed code review with risk tracking
+description: Perform evidence-backed quality audit with risk tracking
 argument-hint: {"issue":{"id":"<issue-id>"},"autopost":true}
 ---
 
-# `/review` — Stage 5: Quality Audit
+# `/qa` — Stage 5: Quality Audit
 
-Use `/review` once implementation reaches a checkpoint. The objective is to reduce residual risk and validate readiness for `/seal`.
+Use `/qa` once implementation reaches a checkpoint. The objective is to reduce residual risk and validate readiness for `/seal`.
 
-> **Autopost default**: `/review` assumes publishing is required. Only set `autopost=false` for exploratory dry-runs; otherwise, the review comment must reach Linear before proceeding.
+> **Autopost default**: `/qa` assumes publishing is required. Only set `autopost=false` for exploratory dry-runs; otherwise, the QA comment must reach Linear before proceeding.
 
 ## Strategos Alignment
 
@@ -20,7 +20,7 @@ Use `/review` once implementation reaches a checkpoint. The objective is to redu
    - `list_comments_linear(issueId: "<issue-id>")` for prior reviews and unresolved findings.
    - Note existing 🔴/🟡 items in the ledger.
 
-2. **File Review**
+2. **File Inspection**
    - Inspect modifications grouped by module/pattern.
    - Apply severity taxonomy:
      - 🔴 Critical — blocks deployment (security, correctness, data integrity)
@@ -31,19 +31,19 @@ Use `/review` once implementation reaches a checkpoint. The objective is to redu
    - Update the ledger per finding (`path:line`, severity, mitigation owner).
    - Cross-reference Strategos patterns to ensure consistency.
 
-4. **Autopost Review Comment**
+4. **Autopost QA Comment**
    - Verify auth with `get_user_linear(query: "me")` if not already cached.
    - Unless `autopost` is `false`, publish immediately after drafting using `uv run python scripts/autopost.py review-report --set issue_key=FM-123 --set timestamp=...`.
-   - Execute `create_comment_linear(issueId: "<issue-id>", body: "<review>")`; log the timestamp in the Evidence Ledger.
+   - Execute `create_comment_linear(issueId: "<issue-id>", body: "<qa>")`; log the timestamp in the Evidence Ledger.
    - On failure, set `cursor.pending_post = true`, capture the error, and retry before seal.
 
 5. **Cursor Update**
-   - Reflect the latest review status in `.flow-maestro/cursor.json` (`pending_post` flag cleared once comment posts; otherwise note retry plan and block `/seal`).
+   - Reflect the latest QA status in `.flow-maestro/cursor.json` (`pending_post` flag cleared once comment posts; otherwise note retry plan and block `/seal`).
 
 ## Output Skeleton
 
 ```markdown
-# Review: JWT Token Service
+# QA Audit: JWT Token Service
 
 **Scope**: Moderate (3 files, 220 LOC)
 **Evidence Ledger Updates**:
@@ -61,13 +61,13 @@ Use `/review` once implementation reaches a checkpoint. The objective is to redu
 ## Verdict
 Status: ❌ BLOCKED — Resolve 🔴 Critical issue
 
-**Next**: `/progress` (implement fixes) then `/review` (re-audit)
+**Next**: `/progress` (implement fixes) then `/qa` (re-audit)
 ```
 
 ## Validation Checklist
 
 - [ ] Ledger captures all findings with severity + owners
-- [ ] Review comment autoposted (or `pending_post` recorded with immediate retry plan)
+- [ ] QA comment autoposted (or `pending_post` recorded with immediate retry plan)
 - [ ] Confidence recalculated (≥95% to proceed)
 - [ ] Cursor updated / read-only noted
 

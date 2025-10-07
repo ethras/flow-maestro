@@ -5,7 +5,7 @@ description: Reusable snippets aligned with the Strategos Prime workflow
 
 # Shared Strategos Templates
 
-> Used primarily by `/progress`, `/review`, and `/seal` to keep the Evidence Ledger and reporting artifacts aligned with Strategos phases.
+> Used primarily by `/progress`, `/qa`, and `/seal` to keep the Evidence Ledger and reporting artifacts aligned with Strategos phases.
 
 ## Confidence Checklist (6 Criteria)
 

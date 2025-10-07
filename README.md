@@ -38,7 +38,7 @@ Once the assets are installed, Flow Maestro ships a staged command suite that gu
 | 2     | `/blueprint`  | Design the delivery architecture (PRPs + Linear issues) |
 | 3     | `/launch`     | Kick off or resume execution on an issue |
 | 4     | `/progress`   | Log work and update the Evidence Ledger |
-| 5     | `/review`     | Perform risk-focused code review     |
+| 5     | `/qa`         | Perform risk-focused quality audit   |
 | 6     | `/seal`       | Close the issue with verified evidence |
 
 Supporting protocols (`strategos-prime.md`, `universal-task-template.md`, `shared-templates.md`, `parent-child-information-flow.md`, `sub-issue-governance.md`) are synchronized with this workflow so each stage references the same Evidence Ledger and confidence gates.

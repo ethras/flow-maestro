@@ -77,7 +77,7 @@ Each mission traverses four grand movements. Commands reference the phases to co
 - `/blueprint` converts Strategos output into PRPs and Linear issues.
 - `/launch` validates readiness and opens execution phases.
 - `/progress` maintains the ledger during implementation.
-- `/review` audits risk before closure.
+- `/qa` audits risk before closure.
 - `/seal` completes the mission with evidence-backed summaries.
 
 ### Stage Timeline
@@ -89,7 +89,7 @@ Each mission traverses four grand movements. Commands reference the phases to co
 | 2     | `/blueprint`| Delivery architecture & PRP orchestration |
 | 3     | `/launch`   | Execution readiness check    |
 | 4     | `/progress` | Evidence Ledger upkeep       |
-| 5     | `/review`   | Risk audit & mitigation      |
+| 5     | `/qa`       | Risk audit & mitigation      |
 | 6     | `/seal`     | Closure & handoff            |
 
 ## Validation Gates

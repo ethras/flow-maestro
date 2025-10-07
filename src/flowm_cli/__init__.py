@@ -18,6 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 from typing import Optional
+import shutil
 
 import httpx
 import typer
@@ -39,7 +40,7 @@ from .core import (
 )
 
 APP_NAME = "flowm"
-__version__ = "0.2.5"
+__version__ = "0.2.6"
 OWNER = os.getenv("FLOWM_REPO_OWNER", "ethras")
 REPO = os.getenv("FLOWM_REPO_NAME", "flow-maestro")
 
@@ -117,6 +118,9 @@ def init(
     target = flow_dir(root)
     ensure_dir(target)
 
+    if not preserve_local:
+        _purge_stage_sections(target, dry_run=dry_run)
+
     # Determine asset URL
     token = github_token or os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
     client = _http_client(skip_tls)
@@ -165,6 +169,20 @@ def init(
     ensure_readme(target)
 
     console.print(Panel(f"Installed Flow Maestro {tag} to {target}\nAdded: {len(report.added)} | Overwritten: {len(report.overwritten)} | Preserved: {len(report.conflicts_preserved)}", title="Success", border_style="green"))
+
+
+def _purge_stage_sections(target: Path, *, dry_run: bool) -> None:
+    stage_dirs = [target / "commands", target / "protocols"]
+    removed = []
+    for stage_dir in stage_dirs:
+        if stage_dir.exists() and stage_dir.is_dir():
+            removed.append(stage_dir)
+            if not dry_run:
+                shutil.rmtree(stage_dir)
+    if removed:
+        verb = "Would remove" if dry_run else "Removed"
+        message = f"{verb} stale stage directories:\n" + "\n".join(str(p) for p in removed)
+        console.print(Panel(message, title="Purged Old Assets", border_style="yellow"))
 
 
 @app.command()
