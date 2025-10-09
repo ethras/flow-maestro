@@ -5,7 +5,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/work` — Stage 3: Execute & Record
 
-`/work` drives implementation. Use it to track progress against `tasks.md`, capture notes, and keep delta specs aligned with reality.
+`/work` drives implementation. Use it to track progress against `tasks.md` (including sub-bullets), capture notes, and keep delta specs aligned with reality.
 
 ## Objectives
 
@@ -30,7 +30,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
      ```
 
 3. **Checklist Maintenance**
-   - Toggle tasks to `[x]` as they complete; add sub-items if new work appears.
+   - Toggle tasks to `[x]` as they complete; update sub-bullets with actual files touched, snippets, and verification commands run.
    - Highlight blockers with `[BLOCKED]` and escalate in `plan.md` if scope shifts.
 
 4. **Delta Refresh**
@@ -42,7 +42,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 ## Validation Checklist
 
 - [ ] Journal updated with date/time and key decisions
-- [ ] `tasks.md` reflects actual status
+- [ ] `tasks.md` reflects actual status with updated sub-bullets
 - [ ] Delta specs match implemented behavior
 - [ ] New risks or follow-ups captured in `plan.md`
 - [ ] Timeline updated with latest summary

@@ -441,15 +441,64 @@ def changes_init(
 
     spec_created = _write_if_missing(
         change_path / "spec.md",
-        "# Change: {change_id}\n\n## Problem\n- TBD\n\n## Questions\n- TBD\n\n## Confidence\n- TBD\n".replace("{change_id}", change_id),
+        (
+            "# Change: {change_id}\n\n"
+            "## Problem\n- …\n\n"
+            "## Desired Outcome\n- …\n\n"
+            "## Constraints\n- …\n\n"
+            "## Success Signals\n- …\n\n"
+            "## Open Questions\n- [NEEDS CLARIFICATION: …]\n"
+        ).replace("{change_id}", change_id),
     )
     plan_created = _write_if_missing(
         change_path / "plan.md",
-        "# Implementation Plan\n\n## Goals\n- TBD\n\n## Approach\n- TBD\n\n## Risks\n- TBD\n\n## Verification\n- TBD\n",
+        (
+            "# Implementation Plan\n\n"
+            "## Summary\n"
+            "- Problem: …\n"
+            "- Desired outcome: …\n"
+            "- Confidence: refer to `spec.md`.\n\n"
+            "## Research & Discovery\n"
+            "- Code search: `rg`/`git grep` for relevant modules, signals.\n"
+            "- Existing flows: document touchpoints (files + functions).\n"
+            "- Context7 (if available): library/topic/tokens.\n\n"
+            "## Change Outline\n"
+            "- Component/service updates with file paths.\n"
+            "- Data model or API adjustments.\n\n"
+            "## Tests & Validation\n"
+            "- Automated: `uv run pytest -q`, lint, integration scripts.\n"
+            "- Manual scenarios: step-by-step flows.\n\n"
+            "## Risks & Mitigations\n"
+            "- Risk → Mitigation / owner.\n\n"
+            "## Follow-ups\n"
+            "- Documentation, rollout, comms, telemetry.\n"
+        ),
     )
     tasks_created = _write_if_missing(
         change_path / "tasks.md",
-        "## 1. Implementation\n- [ ] 1.1 Draft plan details\n- [ ] 1.2 Execute tasks\n- [ ] 1.3 Capture learnings\n",
+        (
+            "## 0. Discovery\n"
+            "- [ ] 0.1 Audit current behaviour\n"
+            "  - Files: `src/...`\n"
+            "  - Findings: …\n"
+            "- [ ] 0.2 Context capture\n"
+            "  - Docs/specs: …\n"
+            "  - Context7 request (optional): library/topic/tokens\n\n"
+            "## 1. Implementation\n"
+            "- [ ] 1.1 Update <component>\n"
+            "  - Files: `src/...`\n"
+            "  - Pseudo-steps: …\n"
+            "- [ ] 1.2 Extend tests\n"
+            "  - Files: `tests/...`\n"
+            "  - Assertions: …\n\n"
+            "## 2. Verification\n"
+            "- [ ] 2.1 Automated checks (`uv run pytest -q`, lint)\n"
+            "- [ ] 2.2 Manual scenario validation\n"
+            "  - Steps: …\n\n"
+            "## 3. Follow-up\n"
+            "- [ ] 3.1 Update docs / changelog\n"
+            "- [ ] 3.2 Notify stakeholders\n"
+        ),
     )
     _write_if_missing(change_path / "qa.md", "")
     _write_if_missing(change_path / "timeline.jsonl", "")

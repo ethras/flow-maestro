@@ -32,21 +32,29 @@ Use these skeletons when updating change folders. Each template aligns with the 
 ```markdown
 # Implementation Plan
 
-## Goals
+## Summary
+- Problem: …
+- Desired outcome: …
+- Confidence: …
+
+## Research & Discovery
+- Code search: `rg …`
+- Existing flow: `path:line`
+- Context7 (optional): library/topic/tokens
+
+## Change Outline
+- File/module → pseudo-steps or snippet
 - …
 
-## Approach
-- …
+## Tests & Validation
+- Automated commands
+- Manual scenarios
 
-## Dependencies
-- …
+## Risks & Mitigations
+- Risk → Mitigation/owner
 
-## Risks
-- Risk → Mitigation
-
-## Verification
-- Automated checks
-- Manual spot checks
+## Follow-ups
+- Docs, rollout, comms
 ```
 
 ---
@@ -54,12 +62,29 @@ Use these skeletons when updating change folders. Each template aligns with the 
 ## `tasks.md`
 
 ```markdown
+## 0. Discovery
+- [ ] 0.1 Audit current behaviour
+  - Files: `…`
+  - Findings: …
+- [ ] 0.2 Context capture
+  - Docs/specs: …
+  - Context7 request (optional): library/topic/tokens
+
 ## 1. Implementation
 - [ ] 1.1 …
+  - Files: `src/...`
+  - Steps: …
 - [ ] 1.2 …
+  - Files: `tests/...`
+  - Steps: …
 
-## 2. Follow-up
-- [ ] 2.1 …
+## 2. Verification
+- [ ] 2.1 Automated checks (`uv run pytest -q`, lint)
+- [ ] 2.2 Manual scenario — …
+
+## 3. Follow-up
+- [ ] 3.1 Docs / changelog
+- [ ] 3.2 Stakeholder comms
 ```
 
 Mark blockers with `[BLOCKED]` and include owners when possible.

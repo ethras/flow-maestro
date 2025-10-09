@@ -16,7 +16,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 ## Workflow
 
 1. **Review State**
-   - Confirm `tasks.md` items are either completed or assigned follow-ups.
+   - Confirm `tasks.md` items (and sub-bullets) are either completed or assigned follow-ups.
    - Re-read `plan.md` to make sure scope and risks are addressed.
 
 2. **Verification Log**
@@ -67,7 +67,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 ## Validation Checklist
 
-- [ ] `tasks.md` updated with real status
+- [ ] `tasks.md` updated with real status + verification notes
 - [ ] `qa.md` documents verification and findings
 - [ ] Delta specs validated via CLI
 - [ ] Follow-ups captured (new tasks or future changes)
