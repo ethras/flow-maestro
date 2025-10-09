@@ -677,7 +677,15 @@ def update(
         raise typer.Exit(0)
 
     # Delegate to init with source=latest
-    init.callback(source="latest", here=here, force=force, dry_run=dry_run, preserve_local=preserve_local, github_token=github_token, skip_tls=skip_tls)  # type: ignore
+    init(
+        source="latest",
+        here=here,
+        force=force,
+        dry_run=dry_run,
+        preserve_local=preserve_local,
+        github_token=github_token,
+        skip_tls=skip_tls,
+    )
 
 
 @app.command()
