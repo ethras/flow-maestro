@@ -1,6 +1,6 @@
 [project]
 name = "flowm-cli"
-version = "0.3.0"
+version = "0.3.1"
 description = "Flow Maestro installer CLI (flowm): install/update .flow-maestro assets from GitHub Releases"
 requires-python = ">=3.11"
 dependencies = [
