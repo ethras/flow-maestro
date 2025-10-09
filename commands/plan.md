@@ -1,121 +1,87 @@
 ---
-description: Execute Strategos Prime planning phases to produce the master plan
-argument-hint: {"mission":{"id":"<optional-issue-id>","summary":"<brief>"}}
+description: Translate an approved idea into plan and tasks
+argument-hint: {"change_id":"<slug>","project":"<slug>"}
 ---
 
-# `/plan` — Stage 1: Strategos Prime
+# `/plan` — Stage 2: Blueprint
 
-Run this command after `/ideate` to transform the mission brief into a verified, multi-phase master plan.
+`/plan` converts `spec.md` into a working blueprint and task list. The output lives inside the same change folder as `/ideate` and prepares `/work` to execute confidently.
 
-> Persona: **STRATEGOS PRIME** — see `protocols/strategos-prime.md` for doctrine, oaths, and Evidence Ledger rules.
+## Objectives
 
-## Phase Overview
+1. Summarize the solution approach, scope boundaries, and key milestones in `plan.md`.
+2. Generate a sequenced checklist in `tasks.md` with owners or hints.
+3. Identify affected capabilities and create delta spec skeletons under `specs/`.
 
-1. **Phase I — Intelligence Summon**
-2. **Phase II — Deep Reconnaissance**
-3. **Phase III — Masterplan Forging**
-4. **Phase IV — Final Seal**
+## Workflow
 
-Each phase must emit artifacts that downstream commands consume.
+1. **Gather Inputs**
+   - Confirm `spec.md` reflects ≥95 % confidence.
+   - Enumerate impacted systems and capabilities.
 
-## Phase I — Intelligence Summon
+2. **Plan Structure**
+   - Update `plan.md` with sections:
+     - `## Goals`
+     - `## Approach`
+     - `## Dependencies`
+     - `## Risks`
+     - `## Verification`
+   - Call out constraints, sequencing, and fallback strategies.
 
-1. Parse mission brief (Linear description, PRP drafts, stakeholder docs).
-2. Distil objectives, success metrics, constraints, non-functional demands.
-3. Write initial Evidence Ledger entries with `path:line` citations.
-4. Output **Mission Decode Summary** (<200 tokens).
+3. **Task Breakdown**
+   - Replace the scaffolded entries in `tasks.md` with ordered checklist items (`- [ ] 1.1 …`).
+   - Label optional parallel tracks as `[P]` where applicable.
 
-```markdown
-## Mission Decode — YYYY-MM-DD HH:MM
-- Objective: …
-- Success Metrics: …
-- Constraints: …
-- UNKNOWN: …
-```
+4. **Spec Deltas**
+   - For each capability, create or update `.flow-maestro/projects/<project>/changes/<change-id>/specs/<capability>/spec.md` using OpenSpec-style headers (`## ADDED`, `## MODIFIED`, etc.).
+   - Keep deltas focused on the requirements that change.
 
-## Phase II — Deep Reconnaissance
+5. **Log Progress**
+   - Append a `plan` entry to `timeline.jsonl` summarizing scope, owners, and next command.
 
-1. Run repository reconnaissance respecting sandbox rules (`tree`, `rg`, targeted scripts`).
-2. Capture architecture diagrams, prior art, tech debt.
-3. Log blocked commands or missing access as risks with owners.
-4. Emit **Recon Report** (<250 tokens) referencing ledger evidence.
+## Output Templates
 
-```markdown
-## Recon Report — YYYY-MM-DD HH:MM
-- Architecture: … (`src/...:42`)
-- Analogues: … (`templates/...`)
-- Risks: … (`UNKNOWN` or `External`)
-- Tools: … (commands run / blocked)
-```
-
-## Phase III — Masterplan Forging
-
-1. Break work into 2–4 strategic phases or workstreams.
-2. For each phase include mission goal, tasks, key files (`path:line`), validation, risks, dependencies, and a `mermaid` diagram.
-3. Ensure phases enable incremental validation and clear rollback points.
+`plan.md`
 
 ```markdown
-## Master Plan
+# Implementation Plan
 
-### Phase A — Mission Goal
-- Tasks: …
-- Key Files: `src/...:line`
-- Validation: …
-- Risks: …
-- Dependencies: …
-- Mermaid:
-```mermaid
-flowchart TD
-  A[Input] --> B[Process]
-```
-```
-
-## Phase IV — Final Seal
-
-1. Audit plan coverage against objectives, risks, and constraints.
-2. Apply 6-criteria confidence checklist (`protocols/shared-templates.md`).
-3. Produce **Final Briefing** with:
-   - Opening Volley
-   - Global `mermaid` linking phases
-   - Phase recaps with citations
-   - Testing & verification checklist
-   - Open questions (numbered)
-   - Recommended next actions (numbered)
-4. Highlight unresolved UNKNOWNs and assign owners or follow-up commands.
-
-```markdown
-## Final Briefing — YYYY-MM-DD HH:MM
-
-### Opening Volley
+## Goals
 - …
 
-```mermaid
-flowchart LR
-  P1[Intelligence] --> P2[Recon]
-  P2 --> P3[Masterplan]
-  P3 --> P4[Final Seal]
-```
-
-### Phase Recap
-1. Phase I …
-
-### Testing & Verification Checklist
+## Approach
 - …
 
-### Open Questions
-1. …
+## Dependencies
+- …
 
-### Recommended Next Actions
-1. …
+## Risks
+- Risk → Mitigation
 
-**Confidence**: XX% (criteria list)
+## Verification
+- `uv run pytest -q`
+- Manual spot checks
+```
+
+`tasks.md`
+
+```markdown
+## 1. Implementation
+- [ ] 1.1 Update API contract
+- [ ] 1.2 Implement handler
+- [ ] 1.3 Write integration tests
+
+## 2. Follow-up
+- [ ] 2.1 Update docs
+- [ ] 2.2 Notify stakeholders
 ```
 
 ## Validation Checklist
 
-- [ ] Evidence Ledger populated with current citations
-- [ ] Mission Decode, Recon Report, Master Plan, Final Briefing produced
-- [ ] Mermaid diagrams embedded in each implementation phase plus global overview
-- [ ] Confidence ≥95% (6-criteria) or blockers assigned
+- [ ] `spec.md` acknowledged and referenced
+- [ ] `plan.md` updated with approach, dependencies, verification
+- [ ] `tasks.md` sequenced with clear outcomes
+- [ ] Delta specs created/updated for every affected capability
+- [ ] Timeline updated with planning summary
 
-**Next**: `/blueprint` to convert the master plan into issues and PRPs.
+**Next**: `/work` to execute the checklist and capture progress notes.

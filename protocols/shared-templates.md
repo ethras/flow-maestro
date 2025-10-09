@@ -1,113 +1,131 @@
+# Shared Templates — File-Based Flow Maestro
+
+Use these skeletons when updating change folders. Each template aligns with the `/ideate → /plan → /work → /qa` loop and assumes state lives in `.flow-maestro/projects/<project>/changes/<change-id>/`.
+
 ---
-title: Shared Strategos Templates
-description: Reusable snippets aligned with the Strategos Prime workflow
----
 
-# Shared Strategos Templates
-
-> Used primarily by `/progress`, `/qa`, and `/seal` to keep the Evidence Ledger and reporting artifacts aligned with Strategos phases.
-
-## Confidence Checklist (6 Criteria)
-
-Use this after every Phase review. Confidence gates require meeting all six criteria (6/6 = 100% confidence); anything less pauses advancement until remediated.
-
-- ✅ **Success Criteria Clarity** — Acceptance tests measurable (`path:line`).
-- ✅ **Integration Points Documented** — Up/downstream touchpoints cited.
-- ✅ **Pattern Consistency Verified** — Existing implementations referenced.
-- ✅ **Risk Mitigation Planned** — Hazards paired with mitigations or owners.
-- ✅ **Sub-Issue Alignment Confirmed** — Parent/child scope reconciled.
-- ✅ **Verification Plan Ready** — Automated + manual checks defined.
-
-> Read-only environments must note `cursor pending (read-only env)` instead of writing `.flow-maestro/cursor.json`.
-
-## Evidence Ledger Snippet
-
-Embed this table in planning outputs, work logs, or completion notes.
+## `spec.md`
 
 ```markdown
-## Evidence Ledger
-| Type | Detail | Source |
-| ---- | ------ | ------ |
-| Observation | Existing deploy command uses `uv run flowm` | `README.md#Development` |
-| Risk | Legacy script fails on macOS (needs validation) | UNKNOWN |
-| Dependency | Requires secrets from Vault path `ops/flow` | External |
-| Decision | Follow logging pattern in `src/flowm_cli/logger.py:18` | `src/flowm_cli/logger.py:18` |
-```
+# Change: <change-id>
 
-## Work Log Update Skeleton (Phase IV)
-
-```markdown
-## Work Log Update - YYYY-MM-DD HH:MM - (Agent)
-
-**Phase Focus**: <I/II/III/IV>
-**Status**: Current state
-
-**Evidence Additions**:
-- Observation: … (`path:line`)
-
-**Actions**:
-- Key work since last log
-
-**Findings / Decisions**:
-- Risks surfaced, mitigations chosen
-
-**Blockers**:
-- Note if any; otherwise "None"
-
-**Next Steps**:
-- Planned follow-up work
-
-**Posted to Linear**: ISSUE-ID (timestamp)
-```
-
-> Keep logs ≤600 tokens; link to detailed artifacts rather than embedding diffs. Render quickly with `uv run python scripts/autopost.py progress-log --set timestamp=...`.
-
-## Final Completion Summary Skeleton (Phase IV)
-
-```markdown
-## Final Completion Summary
-
-**Implemented**:
+## Problem
 - …
 
-**Verification**:
-- Lint: PASS/FAIL (evidence)
-- Test: PASS/FAIL (command)
-- Build: PASS/FAIL
-- Manual QA: Result + scenario
+## Desired Outcome
+- …
 
-**Confidence**: 100% (6/6 criteria)
-- Notes per criterion referencing evidence
+## Constraints
+- …
 
-**Artifacts**:
-- PR/Commit links, dashboards, runbooks
+## Success Signals
+- …
 
-**Risks & Follow-ups**:
-- Outstanding items or tracked issues
-
-**Handoff**:
-- Ownership transfer instructions
-```
-
-## Context Review Summary (Phase II)
-
-```markdown
-## Context Review Summary — YYYY-MM-DD HH:MM
-
-**Mission Decode**:
-- Objective + constraints
-
-**Recon Highlights**:
-- Key Observations (ledger references)
-
-**Risks / Unknowns**:
-- Item → Mitigation / Owner
-
-**Confidence**: <value> (criteria list)
-
-**Next Phase**: Masterplan Forging / Additional Recon
+## Open Questions
+- [NEEDS CLARIFICATION: …]
 ```
 
 ---
 
-Reference `protocols/strategos-prime.md` for the full doctrine and phase expectations. Macro renderers live in `templates/linear-macros/`; call `scripts/autopost.py` to populate them before posting.
+## `plan.md`
+
+```markdown
+# Implementation Plan
+
+## Goals
+- …
+
+## Approach
+- …
+
+## Dependencies
+- …
+
+## Risks
+- Risk → Mitigation
+
+## Verification
+- Automated checks
+- Manual spot checks
+```
+
+---
+
+## `tasks.md`
+
+```markdown
+## 1. Implementation
+- [ ] 1.1 …
+- [ ] 1.2 …
+
+## 2. Follow-up
+- [ ] 2.1 …
+```
+
+Mark blockers with `[BLOCKED]` and include owners when possible.
+
+---
+
+## Delta Specs (`specs/<capability>/spec.md`)
+
+```markdown
+## ADDED Requirements
+### Requirement: Name
+Full requirement text.
+
+#### Scenario: Primary success
+- **WHEN** …
+- **THEN** …
+
+## MODIFIED Requirements
+### Requirement: Existing name
+Updated requirement text.
+
+#### Scenario: Updated behavior
+- …
+
+## REMOVED Requirements
+### Requirement: Old behavior
+**Reason**: …
+```
+
+Include at least one scenario per requirement and keep modifications limited to the behavior that changes.
+
+---
+
+## `qa.md`
+
+```markdown
+# QA Review — <date>
+
+## Scope
+- …
+
+## Automated Verification
+- Command → Result
+
+## Manual Verification
+- Scenario → Outcome
+
+## Findings
+- 🔴 Critical: …
+- 🟡 Warning: …
+- 🟢 Note: …
+
+## Verdict
+✅ READY / ❌ BLOCKED — rationale
+
+**Next**: flowm specs apply <change-id>
+```
+
+---
+
+## Timeline Entries (`timeline.jsonl`)
+
+Append JSON per event:
+
+```json
+{"timestamp": "2025-10-09T18:00:00Z", "command": "plan", "summary": "Plan locked; 6 tasks queued"}
+```
+
+These entries feed dashboards and give reviewers a quick change history.

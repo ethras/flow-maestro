@@ -1,4 +1,0 @@
-{
-  "template": "## Progress Log — {{ timestamp }}\n\n**Phase Focus**: {{ phase_focus }}\n**Status**: {{ status }}\n\n**Evidence Additions**:\n{{ evidence_entries }}\n\n**Actions**:\n{{ actions }}\n\n**Findings / Decisions**:\n{{ decisions }}\n\n**Blockers**: {{ blockers }}\n\n**Next Steps**:\n{{ next_steps }}\n\n**Posted to Linear**: {{ issue_key }} ({{ timestamp }})",
-  "description": "Autopost helper for /progress. Fill placeholders, then run create_comment_linear."
-}

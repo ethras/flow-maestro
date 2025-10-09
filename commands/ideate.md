@@ -1,75 +1,68 @@
 ---
-description: Capture a raw idea, validate intent, and prepare inputs for planning
-argument-hint: {"idea":{"title":"<working-title>","context":"<brief>"}}
+description: Ask clarifying questions until the change spec feels locked in
+argument-hint: {"change_id":"<slug>","project":"<slug>"}
 ---
 
-# `/ideate` — Stage 0: Idea Intake
+# `/ideate` — Stage 1: Clarify the Change
 
-Use this command when a new initiative surfaces. The goal is to transform a raw idea into a mission brief ready for `/plan`.
+Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-maestro/projects/<project>/changes/<change-id>/spec.md`.
 
 ## Objectives
 
-1. Clarify the problem, stakeholders, and desired impact.
-2. Identify constraints, success signals, and compatibility with existing protocols.
-3. Establish a preliminary Evidence Ledger scaffold.
+1. Capture the core problem, desired impact, and success signals.
+2. Identify open questions and assumptions, marking them clearly in the spec.
+3. Reach ≥95 % confidence before handing off to `/plan`.
 
 ## Workflow
 
-1. **Context Sweep**
-   - Gather existing docs, tickets, or chat transcripts.
-   - Note who owns the idea, target users, and deadlines.
+1. **Set Context**
+   - Confirm the active project via `flowm projects use <slug>`.
+   - Scaffold the change if it doesn’t exist: `flowm changes init <change-id> --project <slug>`.
 
-2. **Mission Draft**
-   - Capture working title, elevator pitch, success criteria, and hard constraints.
-   - Document unanswered questions as `UNKNOWN` entries with proposed research paths.
-   - Seed the Evidence Ledger using the shared table template (`protocols/shared-templates.md`).
+2. **Spec Interview**
+   - Ask clarifying questions until gaps are resolved.
+   - Record answers in `spec.md` using sections:
+     - `## Problem`
+     - `## Desired Outcome`
+     - `## Constraints`
+     - `## Success Signals`
+     - `## Open Questions`
+   - Leave `[NEEDS CLARIFICATION: …]` markers where follow-up is required.
 
-3. **Risk Scan**
-   - Brainstorm obvious hazards (compliance, data migration, staffing, sequencing).
-   - Mark each risk with likelihood/impact and potential owners.
+3. **Confidence Pass**
+   - Check that success criteria are measurable.
+   - Verify stakeholders, timelines, and scope boundaries are documented.
+   - When confidence ≥95 %, remove remaining `[NEEDS CLARIFICATION]` markers and log the decision in `timeline.jsonl`.
 
-4. **Planning Hand-off**
-   - Summarize outcome (<150 tokens) to feed directly into `/plan` Phase I.
-   - Store artifacts in `.flow-maestro/workbench/` (create if missing) or attach to the relevant Linear discussion for shared access.
-
-## Output Skeleton
+## Spec Template
 
 ```markdown
-## Idea Intake — YYYY-MM-DD HH:MM
+# Change: <change-id>
 
-**Problem Statement**: …
-**Stakeholders**: …
-**Desired Impact**: …
-
-**Preliminary Success Signals**:
+## Problem
 - …
 
-**Constraints**:
+## Desired Outcome
 - …
 
-**Evidence Ledger Starter**:
-| Type | Detail | Source |
-| ---- | ------ | ------ |
-| Observation | … | … |
-| Risk | … | … |
-| Dependency | … | … |
-| UNKNOWN | … | … |
+## Constraints
+- …
 
-**Initial Risks**:
-- Risk → Mitigation owner
+## Success Signals
+- …
 
-**UNKNOWN**:
-- Question → Research plan
-
-**Ready for**: `/plan`
+## Open Questions
+- [NEEDS CLARIFICATION: …]
 ```
+
+Store supplementary research in `notes/` or `assets/` inside the change folder.
 
 ## Validation Checklist
 
-- [ ] Stakeholders identified
-- [ ] Success signals captured
-- [ ] Constraints enumerated
-- [ ] Risks + UNKNOWN items recorded
-- [ ] Summary prepared for `/plan`
+- [ ] Problem and outcome articulated in `spec.md`
+- [ ] Constraints and success signals enumerated
+- [ ] Stakeholders or owner documented
+- [ ] Confidence ≥95 % (or remaining gaps noted)
+- [ ] Timeline updated with latest summary
 
-**Next**: `/plan` to engage Strategos Prime.
+**Next**: `/plan` to translate the idea into an executable blueprint and task list.

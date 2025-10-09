@@ -1,180 +1,75 @@
 ---
-description: Prime Flow Maestro agent with foundational protocols and Linear MCP setup
+description: Prepare Flow Maestro for the file-based workflow
 argument-hint: (no arguments)
 ---
 
-# `/onboarding` — Flow Maestro Agent Initialization
+# `/onboarding` — Flow Maestro Setup
 
-**Purpose**: Initialize Flow Maestro agent by loading core protocols, connecting to Linear MCP, and validating environment setup.
-
----
-
-## Prerequisite: Install Flow Maestro assets
-
-Ensure the Flow Maestro assets are installed into `.flow-maestro/` in this repository. If the directory is missing, sync the project assets following the maintainer guidelines before continuing.
-
-After installation, the structure will include:
-
-- `.flow-maestro/commands/`
-- `.flow-maestro/protocols/`
-- `.flow-maestro/templates/`
-- `.flow-maestro/VERSION`
-- `.flow-maestro/MANIFEST.json`
-- `.flow-maestro/README.md`
-
-## Step 1: Load Foundational Protocols
-
-Read these protocol files in order:
-
-1. **`.flow-maestro/protocols/strategos-prime.md`** — Strategos persona, oaths, and phase workflow
-2. **`.flow-maestro/protocols/shared-templates.md`** — Evidence Ledger, log, and closure skeletons
-3. **`.flow-maestro/protocols/sub-issue-governance.md`** — Parent/child workflow rules
-4. **`.flow-maestro/protocols/parent-child-information-flow.md`** — Context flow guidance
+Use this script when a repository is adopting Flow Maestro's OpenSpec-style workflow. The goal is to install assets, register projects, and understand the simplified `/ideate → /plan → /work → /qa` loop.
 
 ---
 
-## Step 2: Core Agent Identity
+## Step 1: Install / Update Assets
 
-You are a **disciplined Flow Maestro agent**:
-
-- **Meticulous**: Thorough context gathering before action
-- **Analytical**: Root-cause problem solving, no hammering
-- **Token-Aware**: Target ≤600 tokens per response (hard ceiling 800)
-- **Evidence-Based**: Reference artifacts by timestamp/ID
-
-### Core Maxims
-
-- **PrimedCognition**: Move from `/ideate` to `/plan` only after the mission intent is decoded
-- **ContextualCompetence**: Complete `/plan` Phase II before writing implementation guidance
-- **StrategicMemory**: Update the Evidence Ledger through `/progress`, `/qa`, and `/seal`
-- **AppropriateComplexity**: Keep `/blueprint` aligned with Strategos phases and scope boundaries
-
----
-
-## Step 3: Strategos Prime Phase Map
-
-- **Phase I — Intelligence Summon**: Decode mission objectives, success metrics, and constraints. Populate initial Evidence Ledger entries.
-- **Phase II — Deep Reconnaissance**: Inspect repo/code/docs, logging observations with `path:line` references.
-- **Phase III — Masterplan Forging**: Draft multi-phase execution plan with mermaid diagrams and validation hooks.
-- **Phase IV — Final Seal**: Audit readiness, produce final briefing, confirm all six confidence criteria satisfied (≥95%).
-
-Refer back to `protocols/strategos-prime.md` whenever confidence drops or new context emerges.
-
-## Step 4: Confidence Calculation (6 Criteria)
-
-```
-Confidence (%) = (Criteria Met ÷ 6) × 100
-```
-
-1. **Success Criteria Clarity** — Specific, measurable, testable
-2. **Integration Points Documented** — Dependencies identified
-3. **Pattern Consistency** — Code patterns located
-4. **Risk Mitigation** — Risks have mitigation plans
-5. **Sub-Issue Alignment** — Clear scope, ownership, status
-6. **Verification Plan** — Tests, QA, build documented
-
-**Threshold**: Meet all six criteria (6/6 = 100% confidence) before proceeding; otherwise return to close gaps (`/plan`, `/launch`, `/qa`, `/seal`).
-
----
-
-## Step 5: Linear MCP Integration
-
-**Test Connection**:
-
-1. Call `list_teams_linear` — Verify teams
-2. Call `get_user_linear` with `query: "me"` — Confirm identity
-3. Call `list_issues_linear` with `assignee: "me", limit: 5` — Test access
-
-**Linear MCP Tools**:
-
-- `get_issue_linear` — Fetch issue details
-- `list_comments_linear` — Read comment history
-- `create_comment_linear` — Post manifests, logs, reviews
-- `update_issue_linear` — Change state, assignee, labels
-- `create_issue_linear` — Create tasks
-- `list_issues_linear` — Query issues
-
----
-
-## Step 6: Command Catalog
-
-| Stage | Command      | Purpose                        |
-| ----- | ------------ | ------------------------------ |
-| 0     | `/ideate`    | Capture raw idea & risks       |
-| 1     | `/plan`      | Run Strategos master planning  |
-| 2     | `/blueprint` | Create PRPs & Linear issues    |
-| 3     | `/launch`    | Kick off or resume execution   |
-| 4     | `/progress`  | Log work & ledger updates      |
-| 5     | `/qa`        | Audit changes, reduce risk     |
-| 6     | `/seal`      | Close issue with full evidence |
-
----
-
-## Step 7: State Management
-
-Initialize `.flow-maestro/cursor.json`:
+Run `flowm init` from the repository root to refresh `.flow-maestro/`. This will ensure the `commands/`, `protocols/`, and `templates/` folders match the latest release.
 
 ```bash
-mkdir -p .flow-maestro
-echo '{"issue_id":null,"mode":null,"last_comment_cursor":null,"updated_at":"'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"}' > .flow-maestro/cursor.json
+uvx --from . flowm init --here
 ```
 
+## Step 2: Register Projects
+
+Flow Maestro stores state at the monorepo root. Register each workspace with a slug:
+
+```bash
+flowm projects add web --path apps/web
+flowm projects add api --path services/api
+```
+
+Use `flowm projects list` to confirm, and `flowm projects use <slug>` to set the active project.
+
+## Step 3: Change Folders
+
+Every initiative lives in `.flow-maestro/projects/<project>/changes/<change-id>/`. Scaffold the first change:
+
+```bash
+flowm changes init add-auth-provider --project web --capability auth
+```
+
+This creates `spec.md`, `plan.md`, `tasks.md`, an empty `qa.md`, and delta spec skeletons under `specs/`.
+
+## Step 4: Command Loop
+
+- `/ideate`: Fill `spec.md` via Q&A until confidence ≥95 %.
+- `/plan`: Translate the idea into `plan.md` and populate `tasks.md`.
+- `/work`: Execute tasks, capture notes, and mark progress.
+- `/qa`: Summarize verification in `qa.md` before applying spec deltas.
+
+Track progress with `flowm changes show <change-id>` and create additional deltas as needed.
+
+## Step 5: Apply Specs
+
+Once QA passes, merge deltas into canonical specs and archive the change:
+
+```bash
+flowm specs validate add-auth-provider
+flowm specs apply add-auth-provider
+```
+
+Canonical specs live under `.flow-maestro/projects/<project>/specs/`. After `apply`, the change moves to `changes/archive/`.
+
 ---
 
-## Step 8: Token Efficiency
+## Validation Checklist
 
-- Target: ≤600 tokens
-- Hard ceiling: 800 tokens
-- Reference artifacts by ID, never restate
-- Capture details in Linear comments
-
----
-
-## Step 9: Comment Audit Protocol
-
-Before acting:
-
-1. Call `list_comments_linear` (oldest → newest)
-2. Extract Context Manifests, decisions, risks
-3. Summarize 2-3 key findings
-
----
-
-## Step 10: Parent-Child Governance
-
-1. **Parents**: Coordination only
-2. **Children**: Implementation details
-3. **Progress**: Run `/progress` on the issue where work occurred
-4. **Closure**: Children first, then parent via `/seal`
-
----
-
-## Validation
-
-- [ ] Read 3 protocol files
-- [ ] Tested Linear MCP
-- [ ] Understand 6-criteria confidence
-- [ ] Know command catalog
-- [ ] Initialized state file
-- [ ] Internalized token efficiency
+- [ ] `.flow-maestro/` installed or updated
+- [ ] Projects registered in `state/projects.json`
+- [ ] First change folder scaffolded
+- [ ] Command loop understood (ideate → plan → work → qa)
+- [ ] Spec merge flow confirmed (`specs validate/apply`)
 
 ---
 
 ## Next Steps
 
-**Recommended**:
-
-- New initiative: `/ideate`
-- Existing issue: `/launch {"issue":{"id":"<id>"}}`
-
-**Output**:
-
-```markdown
-✅ Flow Maestro Onboarding Complete
-
-**Protocols**: ✅ Loaded
-**Linear MCP**: Connected
-**State**: Initialized
-
-**Next**: `/ideate` or `/launch {"issue":{"id":"<id>"}}`
-```
+Start with `/ideate` for the newly scaffolded change, or create more project slugs if the monorepo contains additional workspaces.

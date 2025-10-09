@@ -1,74 +1,76 @@
 ---
-description: Perform evidence-backed quality audit with risk tracking
-argument-hint: {"issue":{"id":"<issue-id>"},"autopost":true}
+description: Run verification passes and prepare spec deltas for merge
+argument-hint: {"change_id":"<slug>","project":"<slug>"}
 ---
 
-# `/qa` — Stage 5: Quality Audit
+# `/qa` — Stage 4: Quality & Sign-off
 
-Use `/qa` once implementation reaches a checkpoint. The objective is to reduce residual risk and validate readiness for `/seal`.
+`/qa` verifies that implementation matches the plan and that delta specs describe the final behavior. Use it before calling `flowm specs apply`.
 
-> **Autopost default**: `/qa` assumes publishing is required. Only set `autopost=false` for exploratory dry-runs; otherwise, the QA comment must reach Linear before proceeding.
+## Objectives
 
-## Strategos Alignment
-
-- Operates in Phase IV (Final Seal).
-- Record every finding in the Evidence Ledger with `path:line` references.
+1. Execute automated and manual verification steps and record outcomes in `qa.md`.
+2. Ensure `tasks.md` is fully checked off with no outstanding blockers.
+3. Confirm delta specs match the shipped behavior and include required scenarios.
 
 ## Workflow
 
-1. **Historical Scan**
-   - `list_comments_linear(issueId: "<issue-id>")` for prior reviews and unresolved findings.
-   - Note existing 🔴/🟡 items in the ledger.
+1. **Review State**
+   - Confirm `tasks.md` items are either completed or assigned follow-ups.
+   - Re-read `plan.md` to make sure scope and risks are addressed.
 
-2. **File Inspection**
-   - Inspect modifications grouped by module/pattern.
-   - Apply severity taxonomy:
-     - 🔴 Critical — blocks deployment (security, correctness, data integrity)
-     - 🟡 Warning — should address (reliability, performance, consistency)
-     - 🟢 Note — optional improvements or documentation
+2. **Verification Log**
+   - Create/Update `qa.md` with sections:
+     - `## Scope`
+     - `## Automated Verification`
+     - `## Manual Verification`
+     - `## Findings`
+     - `## Verdict`
+   - Reference concrete commands (e.g., `uv run pytest -q`) and link to artifacts in `assets/`.
 
-3. **Record Findings**
-   - Update the ledger per finding (`path:line`, severity, mitigation owner).
-   - Cross-reference Strategos patterns to ensure consistency.
+3. **Findings Triage**
+   - Label findings as 🔴/🟡/🟢.
+   - Document mitigations or follow-up tasks in `plan.md` or spawn new change folders as needed.
 
-4. **Autopost QA Comment**
-   - Verify auth with `get_user_linear(query: "me")` if not already cached.
-   - Unless `autopost` is `false`, publish immediately after drafting using `uv run python scripts/autopost.py review-report --set issue_key=FM-123 --set timestamp=...`.
-   - Execute `create_comment_linear(issueId: "<issue-id>", body: "<qa>")`; log the timestamp in the Evidence Ledger.
-   - On failure, set `cursor.pending_post = true`, capture the error, and retry before seal.
+4. **Spec Audit**
+   - Run `flowm specs validate <change-id>` to ensure delta structure is sound.
+   - Double-check that scenarios cover success/error paths.
 
-5. **Cursor Update**
-   - Reflect the latest QA status in `.flow-maestro/cursor.json` (`pending_post` flag cleared once comment posts; otherwise note retry plan and block `/seal`).
+5. **Timeline Entry**
+   - Append a `qa` event to `timeline.jsonl` stating results and next steps (apply vs. return to work).
 
 ## Output Skeleton
 
 ```markdown
-# QA Audit: JWT Token Service
+# QA Review — 2025-10-09
 
-**Scope**: Moderate (3 files, 220 LOC)
-**Evidence Ledger Updates**:
-- 🔴 Risk: Hardcoded secret (`src/services/JWTService.ts:15-20`) → Move to env var (owner: Alice)
-- 🟡 Risk: Missing error handling (`src/services/JWTService.ts:45-52`)
-- UNKNOWN: Performance impact pending benchmark
+**Scope**: Feature parity check for add-auth-provider
 
-## 🔴 Critical (1)
-1. Hardcoded Secret Key — Move to env var (`src/config/env.ts:30-40` pattern)
+## Automated Verification
+- `uv run pytest -q` → PASS
+- `npm run lint` → PASS
 
-## 🟡 Warnings (2)
-1. Missing Error Handling — Add guard clauses
-2. Token Expiry Validation — Ensure middleware checks tokens
+## Manual Verification
+- Sign-in flow exercised with new provider
+- Error screens confirmed for invalid tokens
+
+## Findings
+- 🔴 None
+- 🟡 None
+- 🟢 Document rate-limiting expectations in README
 
 ## Verdict
-Status: ❌ BLOCKED — Resolve 🔴 Critical issue
+✅ READY — Specs ready to apply
 
-**Next**: `/progress` (implement fixes) then `/qa` (re-audit)
+**Next**: `flowm specs apply add-auth-provider`
 ```
 
 ## Validation Checklist
 
-- [ ] Ledger captures all findings with severity + owners
-- [ ] QA comment autoposted (or `pending_post` recorded with immediate retry plan)
-- [ ] Confidence recalculated (≥95% to proceed)
-- [ ] Cursor updated / read-only noted
+- [ ] `tasks.md` updated with real status
+- [ ] `qa.md` documents verification and findings
+- [ ] Delta specs validated via CLI
+- [ ] Follow-ups captured (new tasks or future changes)
+- [ ] Timeline updated with QA outcome
 
-**Next**: `/progress` for remediation or `/seal` if all findings cleared.
+**Next**: Run `flowm specs apply <change-id>` to merge deltas and archive the change. If issues persist, return to `/work` and iterate.

@@ -1,4 +1,0 @@
-{
-  "template": "## Final Completion Summary\n\n**Implemented**:\n{{ implemented }}\n\n**Evidence Ledger Closure**:\n{{ ledger_closure }}\n\n**Verification**:\n{{ verification }}\n\n**Confidence**: {{ confidence }}\n\n**Artifacts**:\n{{ artifacts }}\n\n**Risks & Follow-ups**:\n{{ follow_ups }}\n\n**Handoff**: {{ handoff }}\n\n**Posted to Linear**: {{ issue_key }} ({{ timestamp }})",
-  "description": "Autopost helper for /seal. Ensures ledger closure and posted metadata captured."
-}

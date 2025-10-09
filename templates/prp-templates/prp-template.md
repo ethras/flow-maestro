@@ -55,9 +55,9 @@ _Before writing this PRP, validate: "If someone knew nothing about this codebase
   pattern: [Brief description of what pattern to extract]
   gotcha: [Known constraints or limitations to avoid]
 
-# Flow Maestro MCP Integration
-- instruction: "Use task_creation to receive the Linear.create_issue instructions templated from the universal task template. The server returns the content directly; do not assume access to server file paths."
-- note: "Agents may also call get_prp_templates for server-provided templates as reference."
+# Flow Maestro Change State
+- instruction: "Capture planning output in .flow-maestro/projects/<project>/changes/<change-id>/plan.md and tasks.md."
+- note: "Create or update delta specs in specs/<capability>/spec.md so `flowm specs apply` can merge them."
 
 <!-- CONTEXT7_BLOCK_START -->
 # Context7 MCP Integration (for complex tasks)
