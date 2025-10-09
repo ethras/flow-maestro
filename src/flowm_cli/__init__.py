@@ -20,6 +20,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
+from urllib.parse import urlparse
 import shutil
 
 import httpx
@@ -269,9 +270,36 @@ def init(
     token = github_token or os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
     client = _http_client(skip_tls)
 
-    if source and source.startswith("http"):
-        asset_url = source
-        tag = "(unknown)"
+    local_asset: Optional[Path] = None
+    asset_url: Optional[str] = None
+    tag = "(unknown)"
+
+    if source:
+        if source.startswith("file://"):
+            parsed = urlparse(source)
+            local_asset = Path(parsed.path).resolve()
+            tag = "(local)"
+        elif Path(source).expanduser().resolve().exists():
+            local_asset = Path(source).expanduser().resolve()
+            tag = "(local)"
+        elif source.startswith("http"):
+            asset_url = source
+            tag = "(direct)"
+        else:
+            url = _release_api_url(source)
+            try:
+                r = client.get(url, headers=_auth_headers(token), follow_redirects=True)
+                r.raise_for_status()
+            except Exception as e:
+                console.print(Panel(str(e), title="Failed to fetch release info", border_style="red"))
+                raise typer.Exit(1)
+            rel = r.json()
+            tag = rel.get("tag_name", "(unknown)")
+            asset = _pick_asset(rel, ASSET_NAME)
+            if not asset:
+                console.print(Panel(f"Asset '{ASSET_NAME}' not found in release {tag}", title="Asset Missing", border_style="red"))
+                raise typer.Exit(1)
+            asset_url = asset.get("browser_download_url")
     else:
         url = _release_api_url(source)
         try:
@@ -288,14 +316,26 @@ def init(
             raise typer.Exit(1)
         asset_url = asset.get("browser_download_url")
 
+    if local_asset and not local_asset.exists():
+        console.print(Panel(f"Local asset not found: {local_asset}", border_style="red"))
+        raise typer.Exit(1)
+
+    if not local_asset and not asset_url:
+        console.print(Panel("Unable to resolve asset for installation.", border_style="red"))
+        raise typer.Exit(1)
+
     # Download to temp
     with tempfile.TemporaryDirectory() as td:
         zpath = Path(td) / ASSET_NAME
-        try:
-            _download_asset(asset_url, client, token, zpath)
-        except Exception as e:
-            console.print(Panel(str(e), title="Download failed", border_style="red"))
-            raise typer.Exit(1)
+        if local_asset:
+            shutil.copy2(local_asset, zpath)
+            asset_url = local_asset.as_uri()
+        else:
+            try:
+                _download_asset(asset_url, client, token, zpath)
+            except Exception as e:
+                console.print(Panel(str(e), title="Download failed", border_style="red"))
+                raise typer.Exit(1)
 
         # Extract to temp folder then merge
         content_dir = Path(td) / "content"
