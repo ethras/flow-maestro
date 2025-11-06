@@ -9,9 +9,9 @@ Use this script when a repository is adopting Flow Maestro's OpenSpec-style work
 
 ---
 
-## Step 1: Install / Update Assets
+## Step 1: Confirm Assets Are Current
 
-Run `flowm init` from the repository root to refresh `.flow-maestro/`. This will ensure the `commands/`, `protocols/`, and `templates/` folders match the latest release.
+If `.flow-maestro/` already exists and matches the release you expect to use, continue to Step&nbsp;2—no reinstall needed. Run `flowm init` only when setting up Flow Maestro for the first time or when you intentionally pull in updated assets.
 
 ```bash
 uvx --from . flowm init --here
@@ -46,6 +46,12 @@ This creates `spec.md`, `plan.md`, `tasks.md`, an empty `qa.md`, and delta spec 
 - `/qa`: Summarize verification in `qa.md` before applying spec deltas.
 
 Track progress with `flowm changes show <change-id>` and create additional deltas as needed.
+
+### Research & Quality Helpers
+
+- `flowm research capture --query <pattern>` collects recent git log entries, status, and `rg` snippets into `notes/research.md` for the active change.
+- `flowm quality check` flags template placeholders (e.g. `<describe the gap or opportunity>`) inside `spec.md`, `plan.md`, or `tasks.md`.
+- `flowm timeline show|log` lets you review or append timeline entries while you progress through `/plan` and `/work`.
 
 ## Step 5: Apply Specs
 

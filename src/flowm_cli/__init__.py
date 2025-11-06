@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import os
 import shlex
+import subprocess
 import sys
 import tempfile
 from datetime import datetime, timezone
@@ -75,10 +76,115 @@ app = typer.Typer(name=APP_NAME, add_completion=False)
 projects_app = typer.Typer(help="Manage Flow Maestro projects")
 changes_app = typer.Typer(help="Manage change folders")
 specs_app = typer.Typer(help="Validate and apply spec deltas")
+research_app = typer.Typer(help="Capture change research context")
+quality_app = typer.Typer(help="Quality checks for change artifacts")
+timeline_app = typer.Typer(help="Inspect or append timeline events")
 
 app.add_typer(projects_app, name="projects")
 app.add_typer(changes_app, name="changes")
 app.add_typer(specs_app, name="specs")
+app.add_typer(research_app, name="research")
+app.add_typer(quality_app, name="quality")
+app.add_typer(timeline_app, name="timeline")
+
+SPEC_TEMPLATE = (
+    "# Change: {change_id}\\n\\n"
+    "## Overview\\n"
+    "- Problem summary: <describe the gap or opportunity>\\n"
+    "- Impacted users or teams: <list primary audiences>\\n\\n"
+    "## Core Features\\n"
+    "- Feature concept: <behaviour change in one sentence>\\n\\n"
+    "## Data & Interfaces\\n"
+    "- Data touchpoints: <APIs, schemas, events>\\n\\n"
+    "## Architecture Highlights\\n"
+    "- Integration notes: <systems, services, or boundaries>\\n\\n"
+    "## Technical Decisions\\n"
+    "- Decision: <choice> - Rationale: <why>\\n\\n"
+    "## Environment Variables\\n"
+    "- Env var: <VARIABLE_NAME>=<purpose and owner>\\n\\n"
+    "## Open Questions\\n"
+    "- [NEEDS CLARIFICATION: <question or assumption>]\\n\\n"
+    "## Success Criteria\\n"
+    "- Success signal: <how we'll measure success>\\n"
+)
+
+PLAN_TEMPLATE = (
+    "# Implementation Plan\\n\\n"
+    "## Summary\\n"
+    "- Problem: <one sentence recap>\\n"
+    "- Desired outcome: <target state>\\n"
+    "- Confidence: <risk level or blockers>\\n\\n"
+    "## Research & Discovery\\n"
+    "- Code search highlights: <files, commands, references>\\n"
+    "- Existing flows to audit: <entry points>\\n"
+    "- External references: <docs, tickets, context>\\n\\n"
+    "## Implementation Phases\\n"
+    "- Phase 1: <focus and owner>\\n"
+    "- Phase 2: <follow-on work>\\n\\n"
+    "## Tests & Validation\\n"
+    "- Automated: <commands to run>\\n"
+    "- Manual: <scenarios or sign-off steps>\\n\\n"
+    "## Risks & Mitigations\\n"
+    "- Risk: <issue> - Mitigation: <contingency>\\n\\n"
+    "## Follow-ups\\n"
+    "- <documentation, rollout, comms, telemetry>\\n"
+)
+
+TASKS_TEMPLATE = (
+    "## Phase 0 - Discovery\\n"
+    "- [ ] 0.1 Capture baseline context in `notes/research.md`\\n"
+    "  - Summary: <link relevant findings>\\n"
+    "- [ ] 0.2 Align scope and constraints\\n"
+    "  - Notes: <stakeholders or decisions>\\n\\n"
+    "## Phase 1 - Implementation\\n"
+    "- [ ] 1.1 Primary change track\\n"
+    "  - Targets: <files or modules>\\n"
+    "  - Verification: <quick checks during build>\\n"
+    "- [ ] 1.2 Extend or add tests\\n"
+    "  - Targets: <test paths>\\n"
+    "  - Assertions: <behaviour to prove>\\n\\n"
+    "## Phase 2 - Verification\\n"
+    "- [ ] 2.1 Automated validation (`uv run pytest -q`, linters)\\n"
+    "- [ ] 2.2 Manual scenario walkthrough\\n"
+    "  - Steps: <user journey or edge cases>\\n\\n"
+    "## Phase 3 - Follow-up\\n"
+    "- [ ] 3.1 Documentation or changelog updates\\n"
+    "- [ ] 3.2 Notify stakeholders / handoff\\n"
+)
+
+PLACEHOLDER_PATTERNS = {
+    "<describe the gap or opportunity>": "spec overview placeholder",
+    "<list primary audiences>": "spec overview placeholder",
+    "<behaviour change in one sentence>": "core feature placeholder",
+    "<APIs, schemas, events>": "data and interface placeholder",
+    "<systems, services, or boundaries>": "architecture placeholder",
+    "<choice>": "decision placeholder",
+    "<why>": "decision rationale placeholder",
+    "<VARIABLE_NAME>": "environment variable placeholder",
+    "<purpose and owner>": "environment variable placeholder",
+    "<question or assumption>": "open question placeholder",
+    "<how we'll measure success>": "success criteria placeholder",
+    "<one sentence recap>": "plan summary placeholder",
+    "<target state>": "plan summary placeholder",
+    "<risk level or blockers>": "plan summary placeholder",
+    "<files, commands, references>": "research placeholder",
+    "<entry points>": "research placeholder",
+    "<docs, tickets, context>": "research placeholder",
+    "<focus and owner>": "phase planning placeholder",
+    "<follow-on work>": "phase planning placeholder",
+    "<commands to run>": "validation placeholder",
+    "<scenarios or sign-off steps>": "validation placeholder",
+    "<issue>": "risk placeholder",
+    "<contingency>": "risk placeholder",
+    "<documentation, rollout, comms, telemetry>": "follow-up placeholder",
+    "<link relevant findings>": "discovery placeholder",
+    "<stakeholders or decisions>": "discovery placeholder",
+    "<files or modules>": "implementation placeholder",
+    "<quick checks during build>": "implementation placeholder",
+    "<test paths>": "implementation placeholder",
+    "<behaviour to prove>": "implementation placeholder",
+    "<user journey or edge cases>": "verification placeholder",
+}
 
 
 def _auth_headers(token: Optional[str]) -> dict:
@@ -229,6 +335,71 @@ def _resolve_project(flow_path: Path, requested: Optional[str]) -> str:
     return slug
 
 
+def _resolve_change(
+    flow_path: Path,
+    project_slug: str,
+    change_id: Optional[str],
+    allow_create: bool = False,
+) -> tuple[str, Path]:
+    if not change_id:
+        session = _load_session_data(flow_path)
+        change_id = session.get("change")
+    if not change_id:
+        console.print(Panel("No change specified or active.", border_style="red"))
+        raise typer.Exit(1)
+
+    if allow_create:
+        change_path = ensure_change_structure(flow_path, project_slug, change_id)
+    else:
+        change_path = change_dir(flow_path, project_slug, change_id)
+        if not change_path.exists():
+            console.print(
+                Panel(
+                    f"Change '{change_id}' not found for project '{project_slug}'",
+                    border_style="red",
+                )
+            )
+            raise typer.Exit(1)
+    return change_id, change_path
+
+
+def _project_source_path(flow_path: Path, project_slug: str) -> Path:
+    projects = _load_projects_data(flow_path)
+    meta = projects.get(project_slug) or {}
+    path_str = meta.get("path")
+    if not path_str:
+        console.print(
+            Panel(
+                f"Project '{project_slug}' is missing a source path. Re-run 'flowm projects add'.",
+                border_style="red",
+            )
+        )
+        raise typer.Exit(1)
+    return Path(path_str).resolve()
+
+
+def _run_tool(cmd: List[str], cwd: Path) -> str:
+    try:
+        result = subprocess.run(
+            cmd,
+            cwd=str(cwd),
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+    except FileNotFoundError:
+        return f"(command not found: {cmd[0]})"
+    output = result.stdout.strip()
+    if result.returncode != 0:
+        err = result.stderr.strip()
+        message = err or output
+        return f"({' '.join(cmd)}) exited with {result.returncode}: {message}"
+    if len(output) > 4000:
+        output = output[:4000] + "\n... trimmed"
+    return output
+
+
 @app.command()
 def version():
     """Show CLI version."""
@@ -366,7 +537,7 @@ def projects_list():
         return
     lines = []
     for slug, meta in list_projects(flow_path):
-        lines.append(f"{slug} — {meta.get('path', 'unknown')}")
+        lines.append(f"{slug} - {meta.get('path', 'unknown')}")
     console.print(Panel("\n".join(lines), title="Projects", border_style="green"))
 
 
@@ -421,7 +592,7 @@ def changes_list(
     if not changes:
         console.print(Panel(f"No active changes for {project_slug}", border_style="yellow"))
         return
-    console.print(Panel("\n".join(changes), title=f"Changes · {project_slug}", border_style="green"))
+    console.print(Panel("\n".join(changes), title=f"Changes - {project_slug}", border_style="green"))
 
 
 @changes_app.command("init")
@@ -441,64 +612,15 @@ def changes_init(
 
     spec_created = _write_if_missing(
         change_path / "spec.md",
-        (
-            "# Change: {change_id}\n\n"
-            "## Problem\n- …\n\n"
-            "## Desired Outcome\n- …\n\n"
-            "## Constraints\n- …\n\n"
-            "## Success Signals\n- …\n\n"
-            "## Open Questions\n- [NEEDS CLARIFICATION: …]\n"
-        ).replace("{change_id}", change_id),
+        SPEC_TEMPLATE.replace("{change_id}", change_id),
     )
     plan_created = _write_if_missing(
         change_path / "plan.md",
-        (
-            "# Implementation Plan\n\n"
-            "## Summary\n"
-            "- Problem: …\n"
-            "- Desired outcome: …\n"
-            "- Confidence: refer to `spec.md`.\n\n"
-            "## Research & Discovery\n"
-            "- Code search: `rg`/`git grep` for relevant modules, signals.\n"
-            "- Existing flows: document touchpoints (files + functions).\n"
-            "- Context7 (if available): library/topic/tokens.\n\n"
-            "## Change Outline\n"
-            "- Component/service updates with file paths.\n"
-            "- Data model or API adjustments.\n\n"
-            "## Tests & Validation\n"
-            "- Automated: `uv run pytest -q`, lint, integration scripts.\n"
-            "- Manual scenarios: step-by-step flows.\n\n"
-            "## Risks & Mitigations\n"
-            "- Risk → Mitigation / owner.\n\n"
-            "## Follow-ups\n"
-            "- Documentation, rollout, comms, telemetry.\n"
-        ),
+        PLAN_TEMPLATE,
     )
     tasks_created = _write_if_missing(
         change_path / "tasks.md",
-        (
-            "## 0. Discovery\n"
-            "- [ ] 0.1 Audit current behaviour\n"
-            "  - Files: `src/...`\n"
-            "  - Findings: …\n"
-            "- [ ] 0.2 Context capture\n"
-            "  - Docs/specs: …\n"
-            "  - Context7 request (optional): library/topic/tokens\n\n"
-            "## 1. Implementation\n"
-            "- [ ] 1.1 Update <component>\n"
-            "  - Files: `src/...`\n"
-            "  - Pseudo-steps: …\n"
-            "- [ ] 1.2 Extend tests\n"
-            "  - Files: `tests/...`\n"
-            "  - Assertions: …\n\n"
-            "## 2. Verification\n"
-            "- [ ] 2.1 Automated checks (`uv run pytest -q`, lint)\n"
-            "- [ ] 2.2 Manual scenario validation\n"
-            "  - Steps: …\n\n"
-            "## 3. Follow-up\n"
-            "- [ ] 3.1 Update docs / changelog\n"
-            "- [ ] 3.2 Notify stakeholders\n"
-        ),
+        TASKS_TEMPLATE,
     )
     _write_if_missing(change_path / "qa.md", "")
     _write_if_missing(change_path / "timeline.jsonl", "")
@@ -553,7 +675,215 @@ def changes_show(
         info_lines.extend([f" - {cap}: {path}" for cap, path in spec_paths])
     else:
         info_lines.append("No delta specs yet.")
-    console.print(Panel("\n".join(info_lines), title=f"Change · {change_id}", border_style="green"))
+    console.print(Panel("\n".join(info_lines), title=f"Change - {change_id}", border_style="green"))
+
+
+@research_app.command("capture")
+def research_capture(
+    change_id: Optional[str] = typer.Argument(None, help="Change identifier"),
+    project: Optional[str] = typer.Option(None, "--project", "-p", help="Project slug"),
+    query: List[str] = typer.Option([], "--query", "-q", help="Repeat for each ripgrep pattern to capture"),
+    commits: int = typer.Option(5, "--commits", "-c", min=0, help="Number of recent commits to record"),
+):
+    """Append git and code-search context to notes/research.md."""
+
+    flow_path = _locate_flow_dir()
+    _require_flow_dir(flow_path)
+    project_slug = _resolve_project(flow_path, project)
+    change_slug, change_path = _resolve_change(flow_path, project_slug, change_id)
+    source_path = _project_source_path(flow_path, project_slug)
+    if not source_path.exists():
+        console.print(
+            Panel(f"Project path does not exist: {source_path}", border_style="red")
+        )
+        raise typer.Exit(1)
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    sections: List[str] = [f"## Snapshot - {timestamp}", ""]
+
+    if commits:
+        git_log = _run_tool(
+            ["git", "log", f"-{commits}", "--pretty=format:%h %ad %s", "--date=short"],
+            source_path,
+        )
+        if git_log:
+            sections.append("### Recent Commits")
+            sections.append("")
+            for line in git_log.splitlines():
+                stripped = line.strip()
+                if stripped:
+                    sections.append(f"- {stripped}")
+            sections.append("")
+
+    git_status = _run_tool(["git", "status", "-sb"], source_path)
+    if git_status:
+        sections.append("### Git Status")
+        sections.append("")
+        sections.append("```\n" + git_status + "\n```")
+        sections.append("")
+
+    for pattern in query:
+        rg_output = _run_tool(
+            ["rg", "--max-count", "20", "--line-number", "--color", "never", pattern],
+            source_path,
+        )
+        sections.append(f"### Code Search - {pattern}")
+        sections.append("")
+        sections.append("```\n" + (rg_output or "(no matches)") + "\n```")
+        sections.append("")
+
+    research_path = change_path / "notes" / "research.md"
+    research_path.parent.mkdir(parents=True, exist_ok=True)
+    snapshot = "\n".join(sections).strip() + "\n"
+    if research_path.exists():
+        existing = research_path.read_text(encoding="utf-8").rstrip()
+        separator = "\n\n" if existing else ""
+        research_path.write_text(existing + separator + snapshot, encoding="utf-8")
+    else:
+        research_path.write_text("# Research Notes\n\n" + snapshot, encoding="utf-8")
+
+    _save_session_change(flow_path, project_slug, change_slug, stage="plan")
+    query_count = len(query)
+    plural = "query" if query_count == 1 else "queries"
+    _append_timeline(
+        change_path,
+        "research.capture",
+        f"Captured research snapshot ({query_count} {plural})",
+    )
+    console.print(
+        Panel(
+            f"Research snapshot appended to {research_path}",
+            title=f"Research - {change_slug}",
+            border_style="green",
+        )
+    )
+
+
+@quality_app.command("check")
+def quality_check(
+    change_id: Optional[str] = typer.Argument(None, help="Change identifier"),
+    project: Optional[str] = typer.Option(None, "--project", "-p", help="Project slug"),
+    include: List[str] = typer.Option([], "--include", "-i", help="Files to lint: spec, plan, tasks"),
+):
+    """Detect unresolved placeholders in change artifacts."""
+
+    flow_path = _locate_flow_dir()
+    _require_flow_dir(flow_path)
+    project_slug = _resolve_project(flow_path, project)
+    change_slug, change_path = _resolve_change(flow_path, project_slug, change_id)
+
+    targets = {
+        "spec": change_path / "spec.md",
+        "plan": change_path / "plan.md",
+        "tasks": change_path / "tasks.md",
+    }
+    requested = [item.lower() for item in include if item]
+    target_keys = requested or list(targets.keys())
+    unknown = sorted(set(target_keys) - set(targets))
+    if unknown:
+        console.print(Panel(f"Unknown target(s): {', '.join(unknown)}", border_style="red"))
+        raise typer.Exit(1)
+
+    issues: List[str] = []
+    for key in target_keys:
+        path = targets[key]
+        if not path.exists():
+            issues.append(f"{key}: missing file ({path})")
+            continue
+        content = path.read_text(encoding="utf-8")
+        file_issues: List[str] = []
+        for marker, description in PLACEHOLDER_PATTERNS.items():
+            if marker in content:
+                file_issues.append(f"{description} -> '{marker}'")
+        if "TODO" in content:
+            file_issues.append("contains TODO marker")
+        if "TBD" in content:
+            file_issues.append("contains TBD marker")
+        if file_issues:
+            formatted = "; ".join(file_issues)
+            issues.append(f"{key}: {formatted}")
+
+    status = "warnings" if issues else "clear"
+    _append_timeline(change_path, "quality.check", f"Quality check {status}")
+
+    if issues:
+        console.print(
+            Panel(
+                "\n".join(issues),
+                title=f"Quality warnings - {change_slug}",
+                border_style="yellow",
+            )
+        )
+        raise typer.Exit(1)
+
+    console.print(Panel(f"No placeholder markers detected for {', '.join(target_keys)}", border_style="green"))
+
+
+@timeline_app.command("show")
+def timeline_show(
+    change_id: Optional[str] = typer.Argument(None, help="Change identifier"),
+    project: Optional[str] = typer.Option(None, "--project", "-p", help="Project slug"),
+    limit: int = typer.Option(0, "--limit", "-n", help="Show only the most recent N entries"),
+):
+    """Display the timeline.jsonl entries for a change."""
+
+    flow_path = _locate_flow_dir()
+    _require_flow_dir(flow_path)
+    project_slug = _resolve_project(flow_path, project)
+    change_slug, change_path = _resolve_change(flow_path, project_slug, change_id)
+
+    timeline_path = change_path / "timeline.jsonl"
+    if not timeline_path.exists():
+        console.print(Panel(f"No timeline found at {timeline_path}", border_style="yellow"))
+        return
+
+    events: List[dict] = []
+    for line in timeline_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        try:
+            events.append(json.loads(line))
+        except json.JSONDecodeError:
+            events.append({"timestamp": "", "command": "invalid", "summary": line})
+
+    if not events:
+        console.print(Panel("Timeline is empty.", border_style="yellow"))
+        return
+
+    if limit > 0:
+        events = events[-limit:]
+
+    lines = [
+        f"{event.get('timestamp', '')} - {event.get('command', '')} - {event.get('summary', '')}"
+        for event in events
+    ]
+    console.print(
+        Panel("\n".join(lines), title=f"Timeline - {change_slug}", border_style="green")
+    )
+
+
+@timeline_app.command("log")
+def timeline_log(
+    summary: str = typer.Argument(..., help="Summary to append"),
+    project: Optional[str] = typer.Option(None, "--project", "-p", help="Project slug"),
+    change_id: Optional[str] = typer.Option(None, "--change", "-c", help="Change identifier"),
+    command: str = typer.Option("timeline.log", "--command", "-m", help="Command label to record"),
+):
+    """Append a custom entry to timeline.jsonl."""
+
+    flow_path = _locate_flow_dir()
+    _require_flow_dir(flow_path)
+    project_slug = _resolve_project(flow_path, project)
+    change_slug, change_path = _resolve_change(flow_path, project_slug, change_id)
+
+    _append_timeline(change_path, command, summary)
+    console.print(
+        Panel(
+            f"Timeline updated for {change_slug}: {summary}",
+            title="Timeline",
+            border_style="green",
+        )
+    )
 
 
 @specs_app.command("validate")

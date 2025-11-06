@@ -48,6 +48,9 @@ Supporting CLI subcommands:
 - `flowm projects add|list|use` — manage project slugs mapped to repo paths.
 - `flowm changes init|list|show` — scaffold and inspect change folders.
 - `flowm specs validate|apply` — lint delta specs then merge them into canonical specs.
+- `flowm research capture` - append git history and `rg` snapshots to `notes/research.md` for the active change.
+- `flowm quality check` - flag placeholder text in `spec.md`, `plan.md`, or `tasks.md` before handing off to `/plan` or `/work`.
+- `flowm timeline show|log` - review timeline.jsonl entries or append custom milestones.
 
 ## Release packaging
 
