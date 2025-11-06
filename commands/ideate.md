@@ -11,7 +11,7 @@ Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-mae
 
 1. Capture the core problem, desired impact, and success signals.
 2. Identify open questions and assumptions, marking them clearly in the spec.
-3. Reach ≥95 % confidence before handing off to `/plan`.
+3. Reach ≥95 % confidence before handing off to `/blueprint`.
 
 ## Workflow
 
@@ -23,7 +23,7 @@ Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-mae
    - Ask clarifying questions until gaps are resolved.
    - Populate `spec.md` using the detailed scaffold (Overview → Core Features → Data Model & Storage → Workflow & States → API & Integration Notes → Web/Mobile experiences → Dependencies → Technical Decisions → Risks → Environment Variables → Open Questions → Success Criteria).
    - Focus on descriptive prose, tables, and bullet points. Capture entity relationships, lifecycle states, and UX journeys without dropping code snippets or pseudo-code.
-   - Reference existing systems, external services, or prior art in prose; defer code examples to `/plan`.
+   - Reference existing systems, external services, or prior art in prose; defer code examples to `/blueprint`.
    - Leave `[NEEDS CLARIFICATION: …]` markers where follow-up is required.
 
 3. **Confidence Pass**
@@ -45,4 +45,4 @@ Store supplementary research in `notes/` or `assets/` inside the change folder.
 - [ ] Confidence ≥95 % (or remaining gaps noted)
 - [ ] Timeline updated with latest summary
 
-**Next**: `/plan` to translate the idea into an executable blueprint and task list.
+**Next**: `/blueprint` to translate the idea into an executable blueprint and task list.

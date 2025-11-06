@@ -11,13 +11,13 @@ This protocol replaces the former parent/child issue rules. It defines how chang
 ## Change Lifecycle
 
 1. **Start** — `/ideate` reaches ≥95 % confidence; scope documented.
-2. **Plan** — `/plan` produces tasks and delta skeletons.
+2. **Blueprint** — `/blueprint` produces tasks and delta skeletons.
 3. **Execute** — `/work` keeps tasks, journals, and deltas in sync.
 4. **Verify** — `/qa` confirms readiness; `flowm specs apply` merges and archives.
 
 ## Coordination Rules
 
-- Do not start `/work` until `/plan` completes and lists every capability impacted.
+- Do not start `/work` until `/blueprint` completes and lists every capability impacted.
 - If a change introduces follow-up work, spawn a new change folder rather than overloading the current one.
 - Use `flowm changes list` during standups to track active work.
 - Archive immediately after specs apply to avoid lingering mutable state.

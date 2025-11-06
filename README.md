@@ -34,12 +34,12 @@ flowm specs validate add-auth-provider
 
 ## Workflow Overview
 
-Flow Maestro now mirrors OpenSpec’s simple loop — `/ideate → /plan → /work → /qa` — with state stored under `.flow-maestro/projects/<project>/changes/<change-id>/`.
+Flow Maestro now mirrors OpenSpec’s simple loop — `/ideate → /blueprint → /work → /qa` — with state stored under `.flow-maestro/projects/<project>/changes/<change-id>/`.
 
 | Stage | Command   | Purpose |
 |-------|-----------|---------|
 | 1     | `/ideate` | Capture the problem, constraints, and success signals in `spec.md`. |
-| 2     | `/plan`   | Produce `plan.md`, `tasks.md`, and delta spec skeletons. |
+| 2     | `/blueprint`   | Produce `blueprint.md`, `tasks.md`, and delta spec skeletons. |
 | 3     | `/work`   | Execute tasks, journal progress, and refresh deltas. |
 | 4     | `/qa`     | Verify outcomes, finalize delta specs, and prep for merge. |
 
@@ -49,7 +49,7 @@ Supporting CLI subcommands:
 - `flowm changes init|list|show` — scaffold and inspect change folders.
 - `flowm specs validate|apply` — lint delta specs then merge them into canonical specs.
 - `flowm research capture` - append git history and `rg` snapshots to `notes/research.md` for the active change.
-- `flowm quality check` - flag placeholder text in `spec.md`, `plan.md`, or `tasks.md` before handing off to `/plan` or `/work`.
+- `flowm quality check` - flag placeholder text in `spec.md`, `blueprint.md`, or `tasks.md` before handing off to `/blueprint` or `/work`.
 - `flowm timeline show|log` - review timeline.jsonl entries or append custom milestones.
 
 ## Release packaging

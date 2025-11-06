@@ -5,7 +5,7 @@ argument-hint: (no arguments)
 
 # `/onboarding` — Flow Maestro Setup
 
-Use this script when a repository is adopting Flow Maestro's OpenSpec-style workflow. The goal is to install assets, register projects, and understand the simplified `/ideate → /plan → /work → /qa` loop.
+Use this script when a repository is adopting Flow Maestro's OpenSpec-style workflow. The goal is to install assets, register projects, and understand the simplified `/ideate → /blueprint → /work → /qa` loop.
 
 ---
 
@@ -36,12 +36,12 @@ Every initiative lives in `.flow-maestro/projects/<project>/changes/<change-id>/
 flowm changes init add-auth-provider --project web --capability auth
 ```
 
-This creates `spec.md`, `plan.md`, `tasks.md`, an empty `qa.md`, and delta spec skeletons under `specs/`.
+This creates `spec.md`, `blueprint.md`, `tasks.md`, an empty `qa.md`, and delta spec skeletons under `specs/`.
 
 ## Step 4: Command Loop
 
 - `/ideate`: Fill `spec.md` via Q&A until confidence ≥95 %.
-- `/plan`: Translate the idea into `plan.md` and populate `tasks.md`.
+- `/blueprint`: Translate the idea into `blueprint.md` and populate `tasks.md`.
 - `/work`: Execute tasks, capture notes, and mark progress.
 - `/qa`: Summarize verification in `qa.md` before applying spec deltas.
 
@@ -50,8 +50,8 @@ Track progress with `flowm changes show <change-id>` and create additional delta
 ### Research & Quality Helpers
 
 - `flowm research capture --query <pattern>` collects recent git log entries, status, and `rg` snippets into `notes/research.md` for the active change.
-- `flowm quality check` flags template placeholders (e.g. `<describe the gap or opportunity>`) inside `spec.md`, `plan.md`, or `tasks.md`.
-- `flowm timeline show|log` lets you review or append timeline entries while you progress through `/plan` and `/work`.
+- `flowm quality check` flags template placeholders (e.g. `<describe the gap or opportunity>`) inside `spec.md`, `blueprint.md`, or `tasks.md`.
+- `flowm timeline show|log` lets you review or append timeline entries while you progress through `/blueprint` and `/work`.
 
 ## Step 5: Apply Specs
 
@@ -71,7 +71,7 @@ Canonical specs live under `.flow-maestro/projects/<project>/specs/`. After `app
 - [ ] `.flow-maestro/` installed or updated
 - [ ] Projects registered in `state/projects.json`
 - [ ] First change folder scaffolded
-- [ ] Command loop understood (ideate → plan → work → qa)
+- [ ] Command loop understood (ideate → blueprint → work → qa)
 - [ ] Spec merge flow confirmed (`specs validate/apply`)
 
 ---

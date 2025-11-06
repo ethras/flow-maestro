@@ -56,7 +56,7 @@ _Before writing this PRP, validate: "If someone knew nothing about this codebase
   gotcha: [Known constraints or limitations to avoid]
 
 # Flow Maestro Change State
-- instruction: "Capture planning output in .flow-maestro/projects/<project>/changes/<change-id>/plan.md and tasks.md."
+- instruction: "Capture blueprint output in .flow-maestro/projects/<project>/changes/<change-id>/blueprint.md and tasks.md."
 - note: "Create or update delta specs in specs/<capability>/spec.md so `flowm specs apply` can merge them."
 
 <!-- CONTEXT7_BLOCK_START -->

@@ -5,7 +5,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/qa` — Stage 4: Quality & Sign-off
 
-`/qa` verifies that implementation matches the plan and that delta specs describe the final behavior. Use it before calling `flowm specs apply`.
+`/qa` verifies that implementation matches the blueprint and that delta specs describe the final behavior. Use it before calling `flowm specs apply`.
 
 ## Objectives
 
@@ -17,7 +17,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 1. **Review State**
    - Confirm `tasks.md` items (and sub-bullets) are either completed or assigned follow-ups.
-   - Re-read `plan.md` to make sure scope and risks are addressed.
+  - Re-read `blueprint.md` to make sure scope and risks are addressed.
 
 2. **Verification Log**
    - Create/Update `qa.md` with sections:
@@ -30,7 +30,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 3. **Findings Triage**
    - Label findings as 🔴/🟡/🟢.
-   - Document mitigations or follow-up tasks in `plan.md` or spawn new change folders as needed.
+  - Document mitigations or follow-up tasks in `blueprint.md` or spawn new change folders as needed.
 
 4. **Spec Audit**
    - Run `flowm specs validate <change-id>` to ensure delta structure is sound.

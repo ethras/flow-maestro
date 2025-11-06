@@ -1,6 +1,6 @@
 # Shared Templates — File-Based Flow Maestro
 
-Use these skeletons when updating change folders. Each template aligns with the `/ideate → /plan → /work → /qa` loop and assumes state lives in `.flow-maestro/projects/<project>/changes/<change-id>/`.
+Use these skeletons when updating change folders. Each template aligns with the `/ideate → /blueprint → /work → /qa` loop and assumes state lives in `.flow-maestro/projects/<project>/changes/<change-id>/`.
 
 ---
 
@@ -27,10 +27,10 @@ Use these skeletons when updating change folders. Each template aligns with the 
 
 ---
 
-## `plan.md`
+## `blueprint.md`
 
 ```markdown
-# Implementation Plan
+# Implementation Blueprint
 
 ## Summary
 - Problem: …
@@ -42,9 +42,12 @@ Use these skeletons when updating change folders. Each template aligns with the 
 - Existing flow: `path:line`
 - Context7 (optional): library/topic/tokens
 
-## Change Outline
-- File/module → pseudo-steps or snippet
-- …
+## Implementation Phases
+- Phase 1 — owner, files, snippet
+  - ```ts
+    // sample code
+    ```
+- Phase 2 — owner, files, snippet
 
 ## Tests & Validation
 - Automated commands
@@ -150,7 +153,7 @@ Include at least one scenario per requirement and keep modifications limited to 
 Append JSON per event:
 
 ```json
-{"timestamp": "2025-10-09T18:00:00Z", "command": "plan", "summary": "Plan locked; 6 tasks queued"}
+{"timestamp": "2025-10-09T18:00:00Z", "command": "blueprint", "summary": "Blueprint locked; 6 tasks queued"}
 ```
 
 These entries feed dashboards and give reviewers a quick change history.

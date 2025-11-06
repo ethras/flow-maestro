@@ -1,6 +1,6 @@
 # Task Template — Change Execution
 
-Use this lightweight template when expanding `tasks.md` during `/plan`. It keeps tasks small, sequenced, and verifiable.
+Use this lightweight template when expanding `tasks.md` during `/blueprint`. It keeps tasks small, sequenced, and verifiable.
 
 ```markdown
 ## 0. Discovery
@@ -33,6 +33,6 @@ Use this lightweight template when expanding `tasks.md` during `/plan`. It keeps
 - Keep each task outcome-focused: “Implement X”, “Write QA doc”.
 - Use `[P]` suffix for items that can run in parallel safely.
 - Attach owners inline when multiple agents share a change (`- [ ] 1.2 [@alex]`).
-- Add `[BLOCKED: reason]` to tasks requiring external input, and capture mitigation in `plan.md`.
+- Add `[BLOCKED: reason]` to tasks requiring external input, and capture mitigation in `blueprint.md`.
 - Update sub-bullets with file paths, pseudo-steps, and commands as you progress.
 - When new scope appears mid-implementation, add a task or spawn a fresh change folder—do not leave it undocumented.

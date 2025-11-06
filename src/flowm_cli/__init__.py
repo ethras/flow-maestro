@@ -149,9 +149,9 @@ SPEC_TEMPLATE = textwrap.dedent(
 """
 ).strip()
 
-PLAN_TEMPLATE = textwrap.dedent(
+BLUEPRINT_TEMPLATE = textwrap.dedent(
     """\
-# Implementation Plan
+# Implementation Blueprint
 
 ## Summary
 - Problem: <one sentence recap>
@@ -239,14 +239,14 @@ PLACEHOLDER_PATTERNS = {
     "<purpose and owner>": "environment variable placeholder",
     "<question or assumption>": "open question placeholder",
     "<how we'll measure success>": "success criteria placeholder",
-    "<one sentence recap>": "plan summary placeholder",
-    "<target state>": "plan summary placeholder",
-    "<risk level or blockers>": "plan summary placeholder",
+    "<one sentence recap>": "blueprint summary placeholder",
+    "<target state>": "blueprint summary placeholder",
+    "<risk level or blockers>": "blueprint summary placeholder",
     "<files, commands, references>": "research placeholder",
     "<entry points>": "research placeholder",
     "<docs, tickets, context>": "research placeholder",
-    "<focus and owner>": "phase planning placeholder",
-    "<follow-on work>": "phase planning placeholder",
+    "<focus and owner>": "phase blueprint placeholder",
+    "<follow-on work>": "phase blueprint placeholder",
     "<commands to run>": "validation placeholder",
     "<scenarios or sign-off steps>": "validation placeholder",
     "<issue>": "risk placeholder",
@@ -686,9 +686,9 @@ def changes_init(
         change_path / "spec.md",
         SPEC_TEMPLATE.replace("{change_id}", change_id) + "\n",
     )
-    plan_created = _write_if_missing(
-        change_path / "plan.md",
-        PLAN_TEMPLATE + "\n",
+    blueprint_created = _write_if_missing(
+        change_path / "blueprint.md",
+        BLUEPRINT_TEMPLATE + "\n",
     )
     tasks_created = _write_if_missing(
         change_path / "tasks.md",
@@ -715,8 +715,8 @@ def changes_init(
     created_assets = [
         name
         for flag, name in zip(
-            [spec_created, plan_created, tasks_created],
-            ["spec.md", "plan.md", "tasks.md"],
+            [spec_created, blueprint_created, tasks_created],
+            ["spec.md", "blueprint.md", "tasks.md"],
         )
         if flag
     ]
@@ -814,7 +814,7 @@ def research_capture(
     else:
         research_path.write_text("# Research Notes\n\n" + snapshot, encoding="utf-8")
 
-    _save_session_change(flow_path, project_slug, change_slug, stage="plan")
+    _save_session_change(flow_path, project_slug, change_slug, stage="blueprint")
     query_count = len(query)
     plural = "query" if query_count == 1 else "queries"
     _append_timeline(
@@ -835,7 +835,7 @@ def research_capture(
 def quality_check(
     change_id: Optional[str] = typer.Argument(None, help="Change identifier"),
     project: Optional[str] = typer.Option(None, "--project", "-p", help="Project slug"),
-    include: List[str] = typer.Option([], "--include", "-i", help="Files to lint: spec, plan, tasks"),
+    include: List[str] = typer.Option([], "--include", "-i", help="Files to lint: spec, blueprint, tasks"),
 ):
     """Detect unresolved placeholders in change artifacts."""
 
@@ -846,7 +846,7 @@ def quality_check(
 
     targets = {
         "spec": change_path / "spec.md",
-        "plan": change_path / "plan.md",
+        "blueprint": change_path / "blueprint.md",
         "tasks": change_path / "tasks.md",
     }
     requested = [item.lower() for item in include if item]
