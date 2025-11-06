@@ -16,23 +16,25 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 ## Workflow
 
 1. **Gather Inputs**
-   - Confirm `spec.md` reflects ≥95 % confidence.
-   - Enumerate impacted systems/capabilities and run `rg`/`git grep` to log existing entry points (files + functions).
+   - Confirm `spec.md` is complete and free of code. Use it as the narrative baseline.
+   - Run `flowm research capture --query <pattern>` to collect code search results, git status, and recent commits into `notes/research.md`.
+   - Enumerate impacted systems/capabilities and run `rg`/`git grep` to log concrete entry points (files + functions).
    - Capture supporting docs or specs; prep Context7 queries (library/topic/tokens) if available.
 
-2. **Plan Structure**
+2. **Plan Structure (code encouraged)**
    - Update `plan.md` with sections:
      - `## Summary` — restate problem, outcome, confidence.
-     - `## Research & Discovery` — document search results, code paths, Context7 outputs.
-     - `## Change Outline` — highlight modules/files with pseudo-steps or short code snippets when helpful.
+     - `## Research & Discovery` — paste relevant excerpts from `notes/research.md`, include command outputs.
+     - `## Implementation Phases` — outline numbered phases with goals, owners, and links to affected packages.
      - `## Tests & Validation` — automated commands and manual scenarios.
      - `## Risks & Mitigations`, `## Follow-ups` — owners and sequencing.
-   - Include fenced code blocks or pseudo snippets for complex logic.
+   - For each phase, add fenced code blocks or pseudo-code illustrating key changes (EdgeDB schema fragments, GraphQL mutations, component structure). Reference actual file paths.
 
 3. **Task Breakdown**
-   - Replace the scaffold with ordered checklist items (`- [ ] 1.1 …`).
+   - Replace the scaffold in `tasks.md` with ordered checklist items (`- [ ] 1.1 …`).
    - Add sub-bullets for each task detailing files to edit, pseudo-steps, and verification commands (`uv run pytest -q`, manual checks, etc.).
    - Include discovery tasks (audits, dependency review) before implementation steps and mark optional parallel tracks as `[P]`.
+   - Embed code fences or command snippets where they provide clarity (e.g., migration commands, component snippets).
 
 4. **Spec Deltas**
    - For each capability, create or update `.flow-maestro/projects/<project>/changes/<change-id>/specs/<capability>/spec.md` using OpenSpec-style headers (`## ADDED`, `## MODIFIED`, etc.).

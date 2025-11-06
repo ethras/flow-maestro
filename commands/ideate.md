@@ -19,41 +19,21 @@ Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-mae
    - Confirm the active project via `flowm projects use <slug>`.
    - Scaffold the change if it doesn’t exist: `flowm changes init <change-id> --project <slug>`.
 
-2. **Spec Interview**
+2. **Spec Interview (no code allowed)**
    - Ask clarifying questions until gaps are resolved.
-   - Record answers in `spec.md` using sections:
-     - `## Problem`
-     - `## Desired Outcome`
-     - `## Constraints`
-     - `## Success Signals`
-     - `## Open Questions`
+   - Populate `spec.md` using the detailed scaffold (Overview → Core Features → Data Model & Storage → Workflow & States → API & Integration Notes → Web/Mobile experiences → Dependencies → Technical Decisions → Risks → Environment Variables → Open Questions → Success Criteria).
+   - Focus on descriptive prose, tables, and bullet points. Capture entity relationships, lifecycle states, and UX journeys without dropping code snippets or pseudo-code.
+   - Reference existing systems, external services, or prior art in prose; defer code examples to `/plan`.
    - Leave `[NEEDS CLARIFICATION: …]` markers where follow-up is required.
 
 3. **Confidence Pass**
-   - Check that success criteria are measurable.
+   - Ensure each section contains actionable detail (who, what, when, why) and explicitly lists non-goals.
    - Verify stakeholders, timelines, and scope boundaries are documented.
    - When confidence ≥95 %, remove remaining `[NEEDS CLARIFICATION]` markers and log the decision in `timeline.jsonl`.
 
 ## Spec Template
 
-```markdown
-# Change: <change-id>
-
-## Problem
-- …
-
-## Desired Outcome
-- …
-
-## Constraints
-- …
-
-## Success Signals
-- …
-
-## Open Questions
-- [NEEDS CLARIFICATION: …]
-```
+The default scaffold already includes all required headings; replace placeholder text with real information but do not paste code blocks.
 
 Store supplementary research in `notes/` or `assets/` inside the change folder.
 

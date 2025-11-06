@@ -18,6 +18,7 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import textwrap
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional
@@ -87,75 +88,149 @@ app.add_typer(research_app, name="research")
 app.add_typer(quality_app, name="quality")
 app.add_typer(timeline_app, name="timeline")
 
-SPEC_TEMPLATE = (
-    "# Change: {change_id}\\n\\n"
-    "## Overview\\n"
-    "- Problem summary: <describe the gap or opportunity>\\n"
-    "- Impacted users or teams: <list primary audiences>\\n\\n"
-    "## Core Features\\n"
-    "- Feature concept: <behaviour change in one sentence>\\n\\n"
-    "## Data & Interfaces\\n"
-    "- Data touchpoints: <APIs, schemas, events>\\n\\n"
-    "## Architecture Highlights\\n"
-    "- Integration notes: <systems, services, or boundaries>\\n\\n"
-    "## Technical Decisions\\n"
-    "- Decision: <choice> - Rationale: <why>\\n\\n"
-    "## Environment Variables\\n"
-    "- Env var: <VARIABLE_NAME>=<purpose and owner>\\n\\n"
-    "## Open Questions\\n"
-    "- [NEEDS CLARIFICATION: <question or assumption>]\\n\\n"
-    "## Success Criteria\\n"
-    "- Success signal: <how we'll measure success>\\n"
-)
+SPEC_TEMPLATE = textwrap.dedent(
+    """\
+# Change: {change_id}
 
-PLAN_TEMPLATE = (
-    "# Implementation Plan\\n\\n"
-    "## Summary\\n"
-    "- Problem: <one sentence recap>\\n"
-    "- Desired outcome: <target state>\\n"
-    "- Confidence: <risk level or blockers>\\n\\n"
-    "## Research & Discovery\\n"
-    "- Code search highlights: <files, commands, references>\\n"
-    "- Existing flows to audit: <entry points>\\n"
-    "- External references: <docs, tickets, context>\\n\\n"
-    "## Implementation Phases\\n"
-    "- Phase 1: <focus and owner>\\n"
-    "- Phase 2: <follow-on work>\\n\\n"
-    "## Tests & Validation\\n"
-    "- Automated: <commands to run>\\n"
-    "- Manual: <scenarios or sign-off steps>\\n\\n"
-    "## Risks & Mitigations\\n"
-    "- Risk: <issue> - Mitigation: <contingency>\\n\\n"
-    "## Follow-ups\\n"
-    "- <documentation, rollout, comms, telemetry>\\n"
-)
+## Overview
+- Problem summary: <describe the gap or opportunity>
+- Impacted users or teams: <list primary audiences>
+- Business context: <why this matters now>
 
-TASKS_TEMPLATE = (
-    "## Phase 0 - Discovery\\n"
-    "- [ ] 0.1 Capture baseline context in `notes/research.md`\\n"
-    "  - Summary: <link relevant findings>\\n"
-    "- [ ] 0.2 Align scope and constraints\\n"
-    "  - Notes: <stakeholders or decisions>\\n\\n"
-    "## Phase 1 - Implementation\\n"
-    "- [ ] 1.1 Primary change track\\n"
-    "  - Targets: <files or modules>\\n"
-    "  - Verification: <quick checks during build>\\n"
-    "- [ ] 1.2 Extend or add tests\\n"
-    "  - Targets: <test paths>\\n"
-    "  - Assertions: <behaviour to prove>\\n\\n"
-    "## Phase 2 - Verification\\n"
-    "- [ ] 2.1 Automated validation (`uv run pytest -q`, linters)\\n"
-    "- [ ] 2.2 Manual scenario walkthrough\\n"
-    "  - Steps: <user journey or edge cases>\\n\\n"
-    "## Phase 3 - Follow-up\\n"
-    "- [ ] 3.1 Documentation or changelog updates\\n"
-    "- [ ] 3.2 Notify stakeholders / handoff\\n"
-)
+## Core Features
+- Feature concept: <behaviour change in one sentence>
+- Supporting capabilities: <list high-level behaviours>
+- Out of scope: <call out exclusions>
+
+## Data Model & Storage (no code)
+- Entities & relationships: <describe tables/types and key fields>
+- Source of truth: <systems responsible for each data set>
+- Compliance & retention notes: <policies or constraints>
+
+## Workflow & States
+- Lifecycle: <outline status transitions and triggers>
+- Roles & permissions: <who can act when>
+- Edge cases: <highlight recovery paths>
+
+## API & Integration Notes (no code)
+- Backend modules/services: <describe repositories, resolvers, services>
+- External integrations: <Frankfurter, Azure, etc. — include data flow>
+- Observability: <logging/metrics expectations>
+
+## Web Experience Overview
+- Screens & components: <layout, states, interactions>
+- Accessibility/performance: <considerations>
+- Error handling: <how issues surface to users>
+
+## Mobile Experience Overview
+- Screens & flows: <camera, AI sheet, status views>
+- Offline/latency handling: <how the app behaves>
+- Platform nuances: <iOS/Android specifics>
+
+## Dependencies & Assumptions
+- Dependency: <service/library> — Assumption: <availability/performance>
+- Chronology: <critical milestones or launch sequencing>
+
+## Technical Decisions
+- Decision: <choice> - Rationale: <why>
+- Trade-offs: <impact on future work>
+
+## Risks & Mitigations
+- Risk: <issue> - Mitigation: <contingency>
+
+## Environment Variables
+- Env var: <VARIABLE_NAME>=<purpose and owner>
+
+## Open Questions
+- [NEEDS CLARIFICATION: <question or assumption>]
+
+## Success Criteria
+- Success signal: <how we'll measure success>
+"""
+).strip()
+
+PLAN_TEMPLATE = textwrap.dedent(
+    """\
+# Implementation Plan
+
+## Summary
+- Problem: <one sentence recap>
+- Desired outcome: <target state>
+- Confidence: <risk level or blockers>
+
+## Research & Discovery
+- Code search highlights: <files, commands, references>
+- Existing flows to audit: <entry points>
+- External references: <docs, tickets, context>
+
+## Implementation Phases
+- Phase 1: <focus and owner>
+- Phase 2: <follow-on work>
+
+## Tests & Validation
+- Automated: <commands to run>
+- Manual: <scenarios or sign-off steps>
+
+## Risks & Mitigations
+- Risk: <issue> - Mitigation: <contingency>
+
+## Follow-ups
+- <documentation, rollout, comms, telemetry>
+"""
+).strip()
+
+TASKS_TEMPLATE = textwrap.dedent(
+    """\
+## Phase 0 - Discovery
+- [ ] 0.1 Capture baseline context in `notes/research.md`
+  - Summary: <link relevant findings>
+- [ ] 0.2 Align scope and constraints
+  - Notes: <stakeholders or decisions>
+
+## Phase 1 - Implementation
+- [ ] 1.1 Primary change track
+  - Targets: <files or modules>
+  - Verification: <quick checks during build>
+- [ ] 1.2 Extend or add tests
+  - Targets: <test paths>
+  - Assertions: <behaviour to prove>
+
+## Phase 2 - Verification
+- [ ] 2.1 Automated validation (`uv run pytest -q`, linters)
+- [ ] 2.2 Manual scenario walkthrough
+  - Steps: <user journey or edge cases>
+
+## Phase 3 - Follow-up
+- [ ] 3.1 Documentation or changelog updates
+- [ ] 3.2 Notify stakeholders / handoff
+"""
+).strip()
 
 PLACEHOLDER_PATTERNS = {
     "<describe the gap or opportunity>": "spec overview placeholder",
     "<list primary audiences>": "spec overview placeholder",
+    "<why this matters now>": "spec overview placeholder",
     "<behaviour change in one sentence>": "core feature placeholder",
+    "<list high-level behaviours>": "core feature placeholder",
+    "<call out exclusions>": "core feature placeholder",
+    "<describe tables/types and key fields>": "data model placeholder",
+    "<systems responsible for each data set>": "data model placeholder",
+    "<policies or constraints>": "data model placeholder",
+    "<outline status transitions and triggers>": "workflow placeholder",
+    "<who can act when>": "workflow placeholder",
+    "<highlight recovery paths>": "workflow placeholder",
+    "<describe repositories, resolvers, services>": "api placeholder",
+    "<Frankfurter, Azure, etc. — include data flow>": "api placeholder",
+    "<logging/metrics expectations>": "api placeholder",
+    "<layout, states, interactions>": "web placeholder",
+    "<considerations>": "web placeholder",
+    "<how issues surface to users>": "web placeholder",
+    "<camera, AI sheet, status views>": "mobile placeholder",
+    "<how the app behaves>": "mobile placeholder",
+    "<iOS/Android specifics>": "mobile placeholder",
+    "<service/library>": "dependency placeholder",
+    "<availability/performance>": "dependency placeholder",
+    "<critical milestones or launch sequencing>": "dependency placeholder",
     "<APIs, schemas, events>": "data and interface placeholder",
     "<systems, services, or boundaries>": "architecture placeholder",
     "<choice>": "decision placeholder",
@@ -609,15 +684,15 @@ def changes_init(
 
     spec_created = _write_if_missing(
         change_path / "spec.md",
-        SPEC_TEMPLATE.replace("{change_id}", change_id),
+        SPEC_TEMPLATE.replace("{change_id}", change_id) + "\n",
     )
     plan_created = _write_if_missing(
         change_path / "plan.md",
-        PLAN_TEMPLATE,
+        PLAN_TEMPLATE + "\n",
     )
     tasks_created = _write_if_missing(
         change_path / "tasks.md",
-        TASKS_TEMPLATE,
+        TASKS_TEMPLATE + "\n",
     )
     _write_if_missing(change_path / "qa.md", "")
     _write_if_missing(change_path / "timeline.jsonl", "")
