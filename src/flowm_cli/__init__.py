@@ -605,10 +605,7 @@ def changes_init(
     flow_path = _locate_flow_dir()
     _require_flow_dir(flow_path)
     project_slug = _resolve_project(flow_path, project)
-    change_path = change_dir(flow_path, project_slug, change_id)
-    if not change_path.exists():
-        console.print(Panel(f"Change '{change_id}' not found for project '{project_slug}'", border_style="red"))
-        raise typer.Exit(1)
+    _, change_path = _resolve_change(flow_path, project_slug, change_id, allow_create=True)
 
     spec_created = _write_if_missing(
         change_path / "spec.md",
