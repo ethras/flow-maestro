@@ -152,6 +152,43 @@ SPEC_TEMPLATE = textwrap.dedent(
 PLAN_FILENAME = "plan.md"
 LEGACY_BLUEPRINT_FILENAME = "blueprint.md"
 
+CONSTITUTION_TEMPLATE = textwrap.dedent(
+    """\
+# Project Constitution — {project_slug}
+
+## Core Architecture
+- Title: <behavior/invariant>
+  - Summary: <1-2 sentences the whole team should know>
+  - Source: <change-id/path:line>
+  - Last verified: <YYYY-MM-DD>
+
+## Data & Integrations
+- Title: <API/schema contract>
+  - Summary: <constraints, auth, rate limits>
+  - Source: <change-id/path:line>
+  - Last verified: <YYYY-MM-DD>
+
+## Operational Guardrails
+- Title: <runbook/flag/rollback rule>
+  - Summary: <what to do / avoid>
+  - Source: <change-id/path:line>
+  - Last verified: <YYYY-MM-DD>
+
+## Risks & Mitigations
+- Title: <recurring risk>
+  - Summary: <impact + mitigation>
+  - Source: <change-id/path:line>
+  - Last verified: <YYYY-MM-DD>
+
+## Watchlist
+- Title: <open truth we are tracking>
+  - Summary: <why it matters>
+  - Owner: <team or person>
+  - Source: <change-id/path:line>
+  - Last reviewed: <YYYY-MM-DD>
+"""
+).strip()
+
 PLAN_TEMPLATE = textwrap.dedent(
     """\
 # Implementation Plan
@@ -329,6 +366,14 @@ def _require_flow_dir(flow_path: Path) -> None:
 def _ensure_state_files(flow_path: Path) -> None:
     ensure_dir(flow_path)
     ensure_dir(state_dir(flow_path))
+    projects = list_projects(flow_path)
+    for slug, _ in projects:
+        proj_root = project_dir(flow_path, slug)
+        if proj_root.exists():
+            _write_if_missing(
+                proj_root / "constitution.md",
+                CONSTITUTION_TEMPLATE.replace("{project_slug}", slug) + "\n",
+            )
 
 
 def _load_projects_data(flow_path: Path) -> dict:
@@ -655,6 +700,10 @@ def projects_add(
     ensure_dir(project_dir(flow_path, slug) / "changes")
     ensure_dir(project_dir(flow_path, slug) / "changes" / "archive")
     ensure_dir(project_dir(flow_path, slug) / "specs")
+    _write_if_missing(
+        project_dir(flow_path, slug) / "constitution.md",
+        CONSTITUTION_TEMPLATE.replace("{project_slug}", slug) + "\n",
+    )
     _save_session_project(flow_path, slug)
     console.print(Panel(f"Registered project '{slug}' ({abs_path})", border_style="green"))
 
