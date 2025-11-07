@@ -67,7 +67,7 @@ from .state import (
 )
 
 APP_NAME = "flowm"
-__version__ = "0.4.8"
+__version__ = "0.4.9"
 OWNER = os.getenv("FLOWM_REPO_OWNER", "ethras")
 REPO = os.getenv("FLOWM_REPO_NAME", "flow-maestro")
 
