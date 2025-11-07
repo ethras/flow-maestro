@@ -57,3 +57,7 @@ Entries appended automatically by `scripts/create_release.py` after successful r
 - commit: fe338084b27fbe66006a6bd6a09c442fa1471bb2
 - asset: https://github.com/ethras/flow-maestro/releases/download/v0.4.6/flow-maestro-templates.zip
 
+## v0.4.7 — 2025-11-07 10:27:11 CET
+- commit: a16af3414a207a01d63aac7dda15af1930ab4d70
+- asset: https://github.com/ethras/flow-maestro/releases/download/v0.4.7/flow-maestro-templates.zip
+
