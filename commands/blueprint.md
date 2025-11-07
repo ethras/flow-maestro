@@ -5,13 +5,13 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/blueprint` — Stage 2: Implementation Blueprint
 
-`/blueprint` is a shortcut name for this `commands/blueprint.md` playbook. Mention the file path when directing humans or agents so they read the Markdown instead of expecting a slash command to execute.
+`/blueprint` is a shortcut name for this `commands/blueprint.md` playbook. Mention the file path when directing humans or agents so they read the Markdown instead of expecting a slash command to execute. Running `/blueprint` updates `plan.md` (not `blueprint.md`) inside the change folder; the alias sticks for historical reasons, but the artifact we maintain is `plan.md`.
 
-`/blueprint` converts `spec.md` into a detailed execution blueprint and task list packed with research notes, file paths, pseudo-steps, and code samples. The output lives alongside `/ideate` in the change folder and prepares `/work` to execute confidently.
+`/blueprint` converts `spec.md` into a detailed implementation plan and task list packed with research notes, file paths, pseudo-steps, and code samples. The output lives alongside `/ideate` in the change folder and prepares `/work` to execute confidently.
 
 ## Objectives
 
-1. Summarize the solution approach, scope boundaries, and key milestones in `blueprint.md`, backed by concrete research findings.
+1. Summarize the solution approach, scope boundaries, and key milestones in `plan.md`, backed by concrete research findings.
 2. Generate a sequenced checklist in `tasks.md` with sub-bullets for files, pseudo-code, commands, and verification steps.
 3. Identify affected capabilities and create delta spec skeletons under `specs/`.
 
@@ -24,7 +24,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
    - Capture supporting docs or specs; prep Context7 queries (library/topic/tokens) if available.
 
 2. **Blueprint Structure**
-   - Update `blueprint.md` with sections:
+   - Update `plan.md` with sections:
      - `## Summary` — restate problem, outcome, confidence.
      - `## Research & Discovery` — embed relevant excerpts from `notes/research.md`, including command outputs.
      - `## Implementation Phases` — outline numbered phases with goals, owners, affected packages/modules, and include pseudo-code or real code snippets.
@@ -40,14 +40,14 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 4. **Spec Deltas**
    - For each capability, create or update `.flow-maestro/projects/<project>/changes/<change-id>/specs/<capability>/spec.md` using OpenSpec-style headers (`## ADDED`, `## MODIFIED`, etc.).
-   - Tie delta narrative back to sections in `blueprint.md` or specific tasks.
+   - Tie delta narrative back to sections in `plan.md` or specific tasks.
 
 5. **Log Progress**
    - Append a `blueprint` entry to `timeline.jsonl` summarizing scope, research highlights, owners, and next command.
 
 ## Output Templates
 
-`blueprint.md`
+`plan.md`
 
 ```markdown
 # Implementation Blueprint
@@ -114,10 +114,17 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 - [ ] 3.2 Notify finance ops
 ```
 
+### Task-writing tips
+
+- Keep each task focused on an outcome that fits inside a single working block (≤4 hours when possible).
+- Add owners inline (`- [ ] 1.2 [@alex] ...`) and append `[P]` for steps that can run in parallel safely.
+- Mark unresolved dependencies with `[BLOCKED: reason]` and capture the mitigation next to the task plus in `plan.md`.
+- Update sub-bullets with actual file paths, commands, and code snippets as you learn; spawn a fresh change if brand-new scope appears.
+
 ## Validation Checklist
 
 - [ ] `spec.md` acknowledged and referenced
-- [ ] `blueprint.md` updated with research, phase outlines, and code snippets
+- [ ] `plan.md` updated with research, phase outlines, and code snippets
 - [ ] `tasks.md` sequenced with sub-bullets for files/steps/tests
 - [ ] Delta specs created/updated for every affected capability
 - [ ] Context7 or external research captured (if used)

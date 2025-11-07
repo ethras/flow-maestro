@@ -19,7 +19,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 1. **Review State**
    - Confirm `tasks.md` items (and sub-bullets) are either completed or assigned follow-ups.
-  - Re-read `blueprint.md` to make sure scope and risks are addressed.
+  - Re-read `plan.md` to make sure scope and risks are addressed.
 
 2. **Verification Log**
    - Create/Update `qa.md` with sections:
@@ -32,11 +32,36 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 3. **Findings Triage**
    - Label findings as 🔴/🟡/🟢.
-  - Document mitigations or follow-up tasks in `blueprint.md` or spawn new change folders as needed.
+  - Document mitigations or follow-up tasks in `plan.md` or spawn new change folders as needed.
 
 4. **Spec Audit**
    - Run `flowm specs validate <change-id>` to ensure delta structure is sound.
    - Double-check that scenarios cover success/error paths.
+
+### Delta spec template
+
+```markdown
+## ADDED Requirements
+### Requirement: Name
+Full requirement text.
+
+#### Scenario: Primary success
+- **WHEN** …
+- **THEN** …
+
+## MODIFIED Requirements
+### Requirement: Existing name
+Updated requirement text.
+
+#### Scenario: Updated behavior
+- …
+
+## REMOVED Requirements
+### Requirement: Old behavior
+**Reason**: …
+```
+
+Keep each requirement laser-focused on normative behavior. If background context belongs in `plan.md`, reference it rather than duplicating paragraphs.
 
 5. **Timeline Entry**
    - Append a `qa` event to `timeline.jsonl` stating results and next steps (apply vs. return to work).

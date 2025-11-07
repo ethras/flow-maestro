@@ -38,12 +38,12 @@ Every initiative lives in `.flow-maestro/projects/<project>/changes/<change-id>/
 flowm changes init add-auth-provider --project web --capability auth
 ```
 
-This creates `spec.md`, `blueprint.md`, `tasks.md`, an empty `qa.md`, and delta spec skeletons under `specs/`.
+This creates `spec.md`, `plan.md`, `tasks.md`, an empty `qa.md`, and delta spec skeletons under `specs/`.
 
 ## Step 4: Command Loop
 
 - `/ideate`: Fill `spec.md` via Q&A until confidence ≥95 %.
-- `/blueprint`: Translate the idea into `blueprint.md` and populate `tasks.md`.
+- `/blueprint`: Translate the idea into `plan.md` and populate `tasks.md`.
 - `/work`: Execute tasks, capture notes, and mark progress.
 - `/qa`: Summarize verification in `qa.md` before applying spec deltas.
 
@@ -52,8 +52,55 @@ Track progress with `flowm changes show <change-id>` and create additional delta
 ### Research & Quality Helpers
 
 - `flowm research capture --query <pattern>` collects recent git log entries, status, and `rg` snippets into `notes/research.md` for the active change.
-- `flowm quality check` flags template placeholders (e.g. `<describe the gap or opportunity>`) inside `spec.md`, `blueprint.md`, or `tasks.md`.
+- `flowm quality check` flags template placeholders (e.g. `<describe the gap or opportunity>`) inside `spec.md`, `plan.md`, or `tasks.md`.
 - `flowm timeline show|log` lets you review or append timeline entries while you progress through `/blueprint` and `/work`.
+
+## Strategos Prime Loop & Confidence
+
+Flow Maestro inherits the Strategos Prime cadence—every change moves through four disciplined phases:
+
+1. **Ideation (`/ideate`)** — Clarify the problem, users, and success signals in `spec.md`; stop only when confidence ≥95 %.
+2. **Blueprint (`/blueprint`)** — Translate the spec into `plan.md`, expand `tasks.md`, and seed capability deltas.
+3. **Execution (`/work`)** — Follow `tasks.md` in order, keep journals/timeline entries current, and refresh delta specs anytime behavior shifts.
+4. **Quality (`/qa` + `flowm specs apply`)** — Log automated/manual verification in `qa.md`, validate deltas, then merge and archive.
+
+**Confidence criteria** (all six must hold before applying specs):
+
+- Success criteria and constraints are measurable inside `spec.md`.
+- Dependencies are listed in `plan.md` with owners or sequencing.
+- Implementation patterns live in `plan.md` plus `notes/journal.md` snapshots.
+- Risks have mitigation owners; `[BLOCKED]` tasks call them out explicitly.
+- Delta specs are validated and scoped to the behavior that changes.
+- Verification commands (automated + manual) ran recently with reproducible evidence.
+
+## Governance & Information Flow
+
+### Responsibilities
+
+- **Change folder (`changes/<id>/`)** — Owns `spec.md`, `plan.md`, `tasks.md`, journals, timeline, and QA notes.
+- **Capability delta (`specs/<capability>/spec.md`)** — Narrates normative behavior deltas per capability; keep prose tight and scenario-focused.
+
+### Flow of information
+
+1. `/ideate` records the intent.
+2. `/blueprint` decides which capabilities move and drafts deltas.
+3. `/work` pushes detailed decisions into journals and deltas.
+4. `/qa` verifies capability outcomes and finalizes deltas.
+5. `flowm specs apply` projects those deltas into canonical specs before archiving the change.
+
+### Coordination rules
+
+- Do not begin `/work` until `/blueprint` lists every affected capability plus task coverage.
+- Keep changes small enough to finish within a few focused sessions; spawn a new change if scope creeps.
+- Reference files as `path:line` inside journals, plans, and QA notes for traceability.
+- Use `flowm changes list` during standups to avoid overlapping work on the same capability.
+
+### Quality gates & conflict handling
+
+- `tasks.md` cannot carry unchecked blockers; if something stalls, flag it and either mitigate or cut scope.
+- Journals and QA notes must cite real commands/logs—no “tests passed” placeholders.
+- If two changes touch the same capability, coordinate ordering or reconcile delta files before running `specs apply`.
+- After `flowm specs apply`, archive immediately; never keep mutable state in `changes/` once the spec merges.
 
 ## Step 5: Apply Specs
 

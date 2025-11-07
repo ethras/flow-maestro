@@ -15,7 +15,7 @@
 **Deliverable**: A Python Typer-based CLI (`flowm`) distributed via uv, a release packaging process producing `flow-maestro-templates.zip`, and documented workflows for `init`/`update`/`link` with conservative merge/backup behavior.
 
 **Success Definition**:
-- `flowm init --here` creates `.flow-maestro` with `commands/`, `protocols/`, `templates/`, `VERSION`, `MANIFEST.json`, `README.md`
+- `flowm init --here` creates `.flow-maestro` with `commands/`, `templates/`, `VERSION`, `MANIFEST.json`, `README.md`
 - Re-running `flowm update` conservatively updates managed files, backs up modified ones, supports `--preserve-local` and `--dry-run`
 - `flowm link` creates working wrappers on macOS/Linux (sh) and Windows (ps1/cmd)
 - Works with `uv tool install` and `uvx`, handles GH token and TLS flags, with clear error UX
@@ -65,7 +65,6 @@ Provide the `flowm` CLI to install, update, and link Flow Maestro assets into an
 
 ### Flow Maestro assets to install
 - `commands/` (all)
-- `protocols/` (all)
 - `templates/` (all, including `templates/prp-templates/`)
 
 ### Context7 (for research-only reference)
@@ -80,7 +79,6 @@ context7_config:
 ```bash
 .
 ├── commands/
-├── protocols/
 └── templates/
     └── prp-templates/
 ```
@@ -90,7 +88,6 @@ context7_config:
 .
 └── .flow-maestro/
    ├── commands/
-   ├── protocols/
    ├── templates/
    ├── VERSION
    ├── MANIFEST.json
@@ -170,7 +167,7 @@ Task 7: TESTS & CI release
 ```yaml
 RELEASE:
   - asset: "flow-maestro-templates.zip"
-  - includes: "commands/, protocols/, templates/"
+  - includes: "commands/, templates/"
   - excludes: "dev-only files"
 
 CI:
@@ -250,7 +247,7 @@ flowm link --scripts sh
 
 ## Release Checklist (brief)
 1) Prepare release tag: `vX.Y.Z`
-2) Build `flow-maestro-templates.zip` containing only: `commands/`, `protocols/`, `templates/`
+2) Build `flow-maestro-templates.zip` containing only: `commands/` and `templates/`
 3) Create GitHub Release for `vX.Y.Z`; upload the ZIP as asset named exactly `flow-maestro-templates.zip`
 4) Verify release asset accessibility (download URL works without auth; or document GH_TOKEN usage)
 5) Update README with install/update instructions if anything changed
@@ -259,4 +256,3 @@ flowm link --scripts sh
    - `flowm update --dry-run`
    - `flowm link --scripts sh` on POSIX and `--scripts ps` on Windows
 7) Announce changes and any migration notes
-

@@ -27,7 +27,7 @@ flowm specs validate add-auth-provider
 
 ## What it does
 
-- Copies Flow Maestro content into `.flow-maestro/` (commands, protocols, templates)
+- Copies Flow Maestro content into `.flow-maestro/` (commands and templates)
 - Maintains `VERSION` and `MANIFEST.json`
 - Conservative updates: backups on overwrite; `--preserve-local` writes `.new` beside files
 - Supports `--dry-run`, `--force`, `--github-token`, `--skip-tls`
@@ -39,7 +39,7 @@ Flow Maestro now mirrors OpenSpec’s simple loop — `/ideate → /blueprint �
 | Stage | Command   | Purpose |
 |-------|-----------|---------|
 | 1     | `/ideate` (`commands/ideate.md`) | Capture the problem, constraints, and success signals in `spec.md`. |
-| 2     | `/blueprint` (`commands/blueprint.md`)  | Produce `blueprint.md`, `tasks.md`, and delta spec skeletons. |
+| 2     | `/blueprint` (`commands/blueprint.md`)  | Produce `plan.md`, `tasks.md`, and delta spec skeletons. |
 | 3     | `/work` (`commands/work.md`)  | Execute tasks, journal progress, and refresh deltas. |
 | 4     | `/qa` (`commands/qa.md`)    | Verify outcomes, finalize delta specs, and prep for merge. |
 
@@ -49,13 +49,13 @@ Supporting CLI subcommands:
 - `flowm changes init|list|show` — scaffold and inspect change folders.
 - `flowm specs validate|apply` — lint delta specs then merge them into canonical specs.
 - `flowm research capture` - append git history and `rg` snapshots to `notes/research.md` for the active change.
-- `flowm quality check` - flag placeholder text in `spec.md`, `blueprint.md`, or `tasks.md` before handing off to `/blueprint` or `/work`.
+- `flowm quality check` - flag placeholder text in `spec.md`, `plan.md`, or `tasks.md` before handing off to `/blueprint` or `/work`.
 - `flowm timeline show|log` - review timeline.jsonl entries or append custom milestones.
 
 ## Release packaging
 
-On each git tag (vX.Y.Z), the workflow builds `flow-maestro-templates.zip` containing `commands/`, `protocols/`, and `templates/` and publishes it as a Release asset.
-Each release ships the updated command docs, protocols, and templates. Scripts previously tied to Linear are no longer included; publishing now happens via `flowm specs apply`.
+On each git tag (vX.Y.Z), the workflow builds `flow-maestro-templates.zip` containing `commands/` and `templates/` and publishes it as a Release asset.
+Each release ships the updated command docs and templates. Scripts previously tied to Linear are no longer included; publishing now happens via `flowm specs apply`.
 
 ## Notes
 
@@ -67,7 +67,7 @@ Each release ships the updated command docs, protocols, and templates. Scripts p
 
 ## Release process
 
-1. Ensure the content to ship lives under `commands/`, `protocols/`, and `templates/`.
+1. Ensure the content to ship lives under `commands/` and `templates/`.
 2. Commit and push to `main`.
 3. Create and push a tag (semantic):
 
@@ -76,7 +76,7 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-4. GitHub Actions workflow "Release templates" will run and publish a Release with the asset `flow-maestro-templates.zip` (contains `commands/`, `protocols/`, `templates/`).
+4. GitHub Actions workflow "Release templates" will run and publish a Release with the asset `flow-maestro-templates.zip` (contains `commands/` and `templates/`).
 5. Verify the release and asset (automation also runs an `uvx` smoke test and appends details to `RELEASE_LOG.md`):
 
 ```bash

@@ -18,7 +18,7 @@ jobs:
       - name: Prepare zip asset
         run: |
           mkdir -p dist
-          zip -r dist/flow-maestro-templates.zip commands protocols templates -x "*/.*"
+          zip -r dist/flow-maestro-templates.zip commands templates -x "*/.*"
           ls -lh dist
 
       - name: Publish GitHub Release

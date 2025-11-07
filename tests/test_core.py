@@ -23,9 +23,9 @@ def test_merge_add_and_manifest(tmp_path: Path):
     # Prepare source content
     src_root = tmp_path / "src"
     os.makedirs(src_root / "commands", exist_ok=True)
-    os.makedirs(src_root / "protocols", exist_ok=True)
+    os.makedirs(src_root / "templates", exist_ok=True)
     (src_root / "commands" / "onboarding.md").write_text("hello\n")
-    (src_root / "protocols" / "guide.md").write_text("p\n")
+    (src_root / "templates" / "guide.md").write_text("p\n")
 
     # Create zip
     zpath = tmp_path / "x.zip"
@@ -39,13 +39,14 @@ def test_merge_add_and_manifest(tmp_path: Path):
     target = tmp_path / ".flow-maestro"
     report = core.merge_tree(content_dir, target)
     assert "commands/onboarding.md" in report.added
-    assert "protocols/guide.md" in report.added
+    assert "templates/guide.md" in report.added
 
     # Manifest
     manifest = core.compute_manifest(target, version="v0.0.0", asset_url="http://example")
     assert manifest["version"] == "v0.0.0"
     paths = [f["path"] for f in manifest["files"]]
     assert "commands/onboarding.md" in paths
+    assert "templates/guide.md" in paths
 
 
 def test_merge_overwrite_and_preserve(tmp_path: Path):

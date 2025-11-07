@@ -149,9 +149,12 @@ SPEC_TEMPLATE = textwrap.dedent(
 """
 ).strip()
 
-BLUEPRINT_TEMPLATE = textwrap.dedent(
+PLAN_FILENAME = "plan.md"
+LEGACY_BLUEPRINT_FILENAME = "blueprint.md"
+
+PLAN_TEMPLATE = textwrap.dedent(
     """\
-# Implementation Blueprint
+# Implementation Plan
 
 ## Summary
 - Problem: <one sentence recap>
@@ -305,6 +308,16 @@ def _locate_flow_dir(start: Optional[Path] = None) -> Path:
         if candidate_flow.exists():
             return candidate_flow
     return flow_dir(start)
+
+
+def _plan_path(change_path: Path) -> Path:
+    plan_path = change_path / PLAN_FILENAME
+    legacy_path = change_path / LEGACY_BLUEPRINT_FILENAME
+    if plan_path.exists():
+        return plan_path
+    if legacy_path.exists():
+        return legacy_path
+    return plan_path
 
 
 def _require_flow_dir(flow_path: Path) -> None:
@@ -686,9 +699,9 @@ def changes_init(
         change_path / "spec.md",
         SPEC_TEMPLATE.replace("{change_id}", change_id) + "\n",
     )
-    blueprint_created = _write_if_missing(
-        change_path / "blueprint.md",
-        BLUEPRINT_TEMPLATE + "\n",
+    plan_created = _write_if_missing(
+        change_path / PLAN_FILENAME,
+        PLAN_TEMPLATE + "\n",
     )
     tasks_created = _write_if_missing(
         change_path / "tasks.md",
@@ -715,8 +728,8 @@ def changes_init(
     created_assets = [
         name
         for flag, name in zip(
-            [spec_created, blueprint_created, tasks_created],
-            ["spec.md", "blueprint.md", "tasks.md"],
+            [spec_created, plan_created, tasks_created],
+            ["spec.md", PLAN_FILENAME, "tasks.md"],
         )
         if flag
     ]
@@ -835,7 +848,7 @@ def research_capture(
 def quality_check(
     change_id: Optional[str] = typer.Argument(None, help="Change identifier"),
     project: Optional[str] = typer.Option(None, "--project", "-p", help="Project slug"),
-    include: List[str] = typer.Option([], "--include", "-i", help="Files to lint: spec, blueprint, tasks"),
+    include: List[str] = typer.Option([], "--include", "-i", help="Files to lint: spec, plan, tasks (alias: blueprint)"),
 ):
     """Detect unresolved placeholders in change artifacts."""
 
@@ -846,18 +859,26 @@ def quality_check(
 
     targets = {
         "spec": change_path / "spec.md",
-        "blueprint": change_path / "blueprint.md",
+        "plan": _plan_path(change_path),
         "tasks": change_path / "tasks.md",
     }
+    aliases = {"blueprint": "plan"}
     requested = [item.lower() for item in include if item]
-    target_keys = requested or list(targets.keys())
-    unknown = sorted(set(target_keys) - set(targets))
+    candidate_keys = requested or list(targets.keys())
+    normalized: List[str] = []
+    unknown: List[str] = []
+    for key in candidate_keys:
+        canonical = aliases.get(key, key)
+        if canonical not in targets:
+            unknown.append(key)
+        elif canonical not in normalized:
+            normalized.append(canonical)
     if unknown:
-        console.print(Panel(f"Unknown target(s): {', '.join(unknown)}", border_style="red"))
+        console.print(Panel(f"Unknown target(s): {', '.join(sorted(set(unknown)))}", border_style="red"))
         raise typer.Exit(1)
 
     issues: List[str] = []
-    for key in target_keys:
+    for key in (normalized or list(targets.keys())):
         path = targets[key]
         if not path.exists():
             issues.append(f"{key}: missing file ({path})")

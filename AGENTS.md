@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Flow Maestro ships reusable assets plus a lightweight installer. Templates your teams consume live in `commands/`, `protocols/`, and `templates/`; keep release-bound work confined to those folders. The CLI source is under `src/flowm_cli/`, with `core.py` intentionally stdlib-only to simplify packaging. Shared fixtures and integration scenarios belong in `tests/`, while `work/` is a scratchpad for proposals or experiments that should not ship.
+Flow Maestro ships reusable assets plus a lightweight installer. Templates your teams consume live in `commands/` and `templates/`; keep release-bound work confined to those folders. The CLI source is under `src/flowm_cli/`, with `core.py` intentionally stdlib-only to simplify packaging. Shared fixtures and integration scenarios belong in `tests/`, while `work/` is a scratchpad for proposals or experiments that should not ship.
 
 ## Build, Test, and Development Commands
 Use `uv` for repeatable workflows. `uv run flowm --help` exercises the Typer CLI entrypoint. Run unit tests with `uv run pytest -q`, which mirrors CI. During packaging or local installation, prefer `uv tool install flowm-cli --from .` for editable installs and `uv run python -m build` if you need an sdist/wheel. When verifying release artifacts, use `gh release view vX.Y.Z --repo ethras/flow-maestro --json assets,name,url` once tagging completes.

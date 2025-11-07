@@ -35,7 +35,26 @@ Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-mae
 
 ## Spec Template
 
-The default scaffold already includes all required headings; replace placeholder text with real information but do not paste code blocks.
+The default scaffold already includes all required headings; replace placeholder text with real information but do not paste code blocks. Use this reference if you need to rebuild the file:
+
+```markdown
+# Change: <change-id>
+
+## Problem
+- …
+
+## Desired Outcome
+- …
+
+## Constraints
+- …
+
+## Success Signals
+- …
+
+## Open Questions
+- [NEEDS CLARIFICATION: …]
+```
 
 Store supplementary research in `notes/` or `assets/` inside the change folder.
 

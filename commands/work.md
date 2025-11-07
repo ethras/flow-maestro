@@ -19,7 +19,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 
 1. **Prep**
    - Select the active project/change (`flowm projects use`, `flowm changes show`).
-  - Review `blueprint.md` and `tasks.md` for sequencing.
+  - Review `plan.md` and `tasks.md` for sequencing.
 
 2. **Execution Journal**
    - For each working block, append to `notes/journal.md`:
@@ -33,7 +33,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 
 3. **Checklist Maintenance**
    - Toggle tasks to `[x]` as they complete; update sub-bullets with actual files touched, snippets, and verification commands run.
-  - Highlight blockers with `[BLOCKED]` and escalate in `blueprint.md` if scope shifts.
+   - Highlight blockers with `[BLOCKED]` and escalate in `plan.md` if scope shifts.
 
 4. **Delta Refresh**
    - Keep capability deltas current. Any new requirements discovered during implementation must land in the corresponding `specs/<capability>/spec.md` file.
@@ -41,12 +41,19 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 5. **Timeline Entry**
    - Record a `work` event in `timeline.jsonl` summarizing progress and next steps.
 
+## Change vs Capability Handshake
+
+- Treat the change folder as the parent artifact: it owns `spec.md`, `plan.md`, `tasks.md`, journals, and QA notes.
+- Each capability delta (`specs/<capability>/spec.md`) is the child artifact describing normative behavior for a single capability; keep prose short and scenario-focused.
+- As you finish a block of work, update both the journal and the affected delta so traceability stays tight. Reference files as `path:line` whenever you describe an edit.
+- If multiple changes would touch the same capability, coordinate with `flowm changes list` and either sequence the work or reconcile deltas before QA.
+
 ## Validation Checklist
 
 - [ ] Journal updated with date/time and key decisions
 - [ ] `tasks.md` reflects actual status with updated sub-bullets
 - [ ] Delta specs match implemented behavior
-- [ ] New risks or follow-ups captured in `blueprint.md`
+- [ ] New risks or follow-ups captured in `plan.md`
 - [ ] Timeline updated with latest summary
 
 **Next**: `/qa` once implementation stabilizes and verification can run.
