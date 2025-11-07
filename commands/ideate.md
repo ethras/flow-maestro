@@ -32,7 +32,7 @@ Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-mae
 3. **Confidence Pass**
    - Ensure each section contains actionable detail (who, what, when, why) and explicitly lists non-goals.
    - Verify stakeholders, timelines, and scope boundaries are documented.
-   - When confidence ≥95 %, remove remaining `[NEEDS CLARIFICATION]` markers and log the decision in `timeline.jsonl`.
+   - When confidence ≥95 %, remove remaining `[NEEDS CLARIFICATION]` markers and log the decision via `flowm timeline log --command ideate "confidence reached"` (never edit `timeline.jsonl` by hand).
 
 ## Spec Template
 

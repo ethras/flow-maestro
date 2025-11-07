@@ -40,7 +40,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
    - Keep capability deltas current. Any new requirements discovered during implementation must land in the corresponding `specs/<capability>/spec.md` file.
 
 5. **Timeline Entry**
-   - Record a `work` event in `timeline.jsonl` summarizing progress and next steps.
+   - Record a `work` event using `flowm timeline log --command work "<progress + next steps>"`. Never append directly to `timeline.jsonl`.
 
 6. **Constitution Touch-up**
    - When execution surfaces a reusable pattern, integration constraint, or recurring risk, add or update the project constitution entry (short title, summary, source, last verified). If an existing entry becomes obsolete, update its summary and verification date or remove it.

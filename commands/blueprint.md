@@ -49,7 +49,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
    - Tie delta narrative back to sections in `plan.md` or specific tasks.
 
 7. **Log Progress**
-   - Append a `blueprint` entry to `timeline.jsonl` summarizing scope, research highlights, owners, and next command.
+   - Use `flowm timeline log --command blueprint "<scope + next command>"` to record research highlights, owners, and the next stage. Do not edit `timeline.jsonl` manually.
 
 ## Output Templates
 

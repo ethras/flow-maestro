@@ -64,7 +64,7 @@ Updated requirement text.
 Keep each requirement laser-focused on normative behavior. If background context belongs in `plan.md`, reference it rather than duplicating paragraphs.
 
 5. **Timeline Entry**
-   - Append a `qa` event to `timeline.jsonl` stating results and next steps (apply vs. return to work).
+   - Append a `qa` event via `flowm timeline log --command qa "<verdict + next step>"` (e.g., apply vs. return to work). Do not edit the JSONL file manually.
 6. **Constitution Review**
    - Re-read `.flow-maestro/projects/<project>/constitution.md` to ensure new findings are captured and outdated entries are updated with fresh “Last verified” dates. Note any mismatches as QA findings until resolved.
 

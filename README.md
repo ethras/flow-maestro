@@ -50,7 +50,7 @@ Supporting CLI subcommands:
 - `flowm specs validate|apply` — lint delta specs then merge them into canonical specs.
 - `flowm research capture` - append git history and `rg` snapshots to `notes/research.md` for the active change; run it (and any Context7/web lookups) during `/blueprint`, and again during `/work` if new questions appear.
 - `flowm quality check` - flag placeholder text in `spec.md`, `plan.md`, or `tasks.md` before handing off to `/blueprint` or `/work`.
-- `flowm timeline show|log` - review timeline.jsonl entries or append custom milestones.
+- `flowm timeline show|log` - review timeline entries or append milestones; always use this command instead of editing `timeline.jsonl` manually.
 
 ## Release packaging
 
