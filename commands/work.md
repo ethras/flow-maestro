@@ -43,7 +43,8 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
    - Record a `work` event using `flowm timeline log --command work "<progress + next steps>"`. Never append directly to `timeline.jsonl`.
 
 6. **Constitution Touch-up**
-   - When execution surfaces a reusable pattern, integration constraint, or recurring risk, add or update the project constitution entry (short title, summary, source, last verified). If an existing entry becomes obsolete, update its summary and verification date or remove it.
+   - When execution surfaces a reusable pattern, integration constraint, or recurring risk, run `flowm projects constitution record "<title>" --summary "<what we learned>" --source "<change>/<path>:<line>" --section <core|data|operations|risks|watchlist>` to append (or refresh) the entry in `.flow-maestro/projects/<project>/constitution.md`. The command stamps today’s date automatically; pass `--verified YYYY-MM-DD` when backfilling older insights and `--owner <team>` when logging watchlist items.
+   - Reference the new constitution entry from your `notes/journal.md` block or `plan.md` follow-ups so reviewers can trace the origin. If an entry becomes obsolete, re-run the same command with an updated summary/source to refresh it before removing anything manually.
 
 ## Change vs Capability Handshake
 
@@ -55,7 +56,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 ## Validation Checklist
 
 - [ ] Research gaps resolved (new findings logged in `notes/research.md` and linked from `plan.md`/`tasks.md`)
-- [ ] Constitution updated if reusable insights emerged (or existing entries re-verified)
+- [ ] Constitution updated via `flowm projects constitution record …` if reusable insights emerged (or existing entries re-verified)
 - [ ] Journal updated with date/time and key decisions
 - [ ] `tasks.md` reflects actual status with updated sub-bullets
 - [ ] Delta specs match implemented behavior

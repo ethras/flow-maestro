@@ -30,7 +30,7 @@ flowm projects add api --path services/api
 
 Use `flowm projects list` to confirm, and `flowm projects use <slug>` to set the active project.
 
-Each `flowm projects add` run also seeds `.flow-maestro/projects/<slug>/constitution.md`. This “project memory” captures reusable architecture, integration contracts, and guardrails—treat it as required reading before deep dives and update it whenever you learn something future changes need to know.
+Each `flowm projects add` run also seeds `.flow-maestro/projects/<slug>/constitution.md`. This “project memory” captures reusable architecture, integration contracts, and guardrails—treat it as required reading before deep dives and use `flowm projects constitution record` whenever you learn something future changes need to know.
 
 ## Step 3: Change Folders
 

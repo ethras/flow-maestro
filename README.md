@@ -64,7 +64,7 @@ Each release ships the updated command docs and templates. Scripts previously ti
 - TLS verification is on by default; `--skip-tls` is available for special cases.
 - `.flow-maestro/workbench/` remains a scratchpad for research notes.
 - Canonical specs live under `.flow-maestro/projects/<project>/specs/` and are updated via `flowm specs apply`.
-- Every project owns `.flow-maestro/projects/<project>/constitution.md`, a curated log of architecture patterns, integration contracts, operational guardrails, and recurring risks. Only reusable, validated insights belong there—reference it before `/ideate`, promote new findings during `/blueprint`, and refresh it as `/work` and `/qa` surface fresh information.
+- Every project owns `.flow-maestro/projects/<project>/constitution.md`, a curated log of architecture patterns, integration contracts, operational guardrails, and recurring risks. Only reusable, validated insights belong there—reference it before `/ideate`, promote new findings during `/blueprint`, and refresh it via `flowm projects constitution record` as `/work` and `/qa` surface new information.
 
 ## Project Constitution
 
@@ -73,7 +73,7 @@ Flow Maestro relies on a “constitution” file per project to keep persistent 
 - **Location**: `.flow-maestro/projects/<project>/constitution.md` (auto-created when you run `flowm projects add`).
 - **Structure**: Sections for Core Architecture, Data & Integrations, Operational Guardrails, Risks & Mitigations, and a Watchlist. Each entry records a title, 1–2 sentence summary, `Source: changes/<id>/path:line`, and `Last verified: YYYY-MM-DD`.
 - **Guardrails**: Include only information that multiple changes should know. If it’s speculative or limited to the active change, leave it in `notes/` or `plan.md` until proven.
-- **Workflow hooks**: `/ideate` reviews constitution for background; `/blueprint` promotes reusable research into new entries; `/work` backfills anything discovered mid-build; `/qa` double-checks that entries remain accurate after verification.
+- **Workflow hooks**: `/ideate` reviews constitution for background; `/blueprint` promotes reusable research into new entries; `/work` backfills anything discovered mid-build; `/qa` double-checks that entries remain accurate after verification. Each stage should use `flowm projects constitution record` so entries stay normalized and dated automatically.
 
 Treat the constitution as the project’s collective memory—the leaner and better sourced it is, the faster future changes ramp up.
 
