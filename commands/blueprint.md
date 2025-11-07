@@ -7,11 +7,11 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 `/blueprint` is a shortcut name for this `commands/blueprint.md` playbook. Mention the file path when directing humans or agents so they read the Markdown instead of expecting a slash command to execute. Running `/blueprint` updates `plan.md` (not `blueprint.md`) inside the change folder; the alias sticks for historical reasons, but the artifact we maintain is `plan.md`.
 
-`/blueprint` converts `spec.md` into a detailed implementation plan and task list packed with research notes, file paths, pseudo-steps, and code samples. The output lives alongside `/ideate` in the change folder and prepares `/work` to execute confidently.
+`/blueprint` converts `spec.md` into a detailed implementation plan and task list packed with research notes, file paths, pseudo-steps, and code samples. The output lives alongside `/ideate` in the change folder and prepares `/work` to execute confidently. Expect to spend meaningful time researching here—every question answered now is one less rediscovery during `/work`.
 
 ## Objectives
 
-1. Summarize the solution approach, scope boundaries, and key milestones in `plan.md`, backed by concrete research findings.
+1. Summarize the solution approach, scope boundaries, and key milestones in `plan.md`, backed by concrete research findings logged during this phase.
 2. Generate a sequenced checklist in `tasks.md` with sub-bullets for files, pseudo-code, commands, and verification steps.
 3. Identify affected capabilities and create delta spec skeletons under `specs/`.
 
@@ -19,11 +19,16 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 1. **Gather Inputs**
    - Confirm `spec.md` reflects ≥95 % confidence with narrative-only detail.
-   - Run `flowm research capture --query <pattern>` to pull git status, recent commits, and code search snippets into `notes/research.md`.
-   - Enumerate impacted systems/capabilities and run `rg`/`git grep` to log concrete entry points.
-   - Capture supporting docs or specs; prep Context7 queries (library/topic/tokens) if available.
+   - Run code searches (`rg`, `git grep`, Language Server peek) to locate entry points; capture the snippets you find.
+   - Collect external knowledge (design docs, API references, RFCs) you’ll need later.
 
-2. **Blueprint Structure**
+2. **Research Log (mandatory)**
+   - Create `notes/research.md` (or append to the existing file) with dated sections summarizing findings.
+   - Use all available channels: `flowm research capture` for git/code snapshots, Context7 queries for library docs, and web search when repo knowledge isn’t enough. Quote or paraphrase each result with links or cite-able identifiers so the next agent can act without repeating the lookup.
+   - Highlight blockers, open questions, and follow-ups inline. Call out exactly which future task or plan section each finding supports (e.g., “feeds plan.md › Phases › Phase 2” or “unblocks tasks.md › 1.3”).
+   - When screenshots or large outputs matter, link to artifacts stored under `notes/` or `assets/` and reference them from `plan.md`.
+
+3. **Blueprint Structure**
    - Update `plan.md` with sections:
      - `## Summary` — restate problem, outcome, confidence.
      - `## Research & Discovery` — embed relevant excerpts from `notes/research.md`, including command outputs.
@@ -32,17 +37,17 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
      - `## Risks & Mitigations`, `## Follow-ups` — owners and sequencing.
    - Use fenced code blocks, pseudo-code, and command snippets to illustrate schema changes, GraphQL additions, or component structure.
 
-3. **Task Breakdown**
+5. **Task Breakdown**
    - Replace the scaffold in `tasks.md` with ordered checklist items (`- [ ] 1.1 …`).
    - Add sub-bullets detailing files to edit, pseudo-steps, and verification commands (`uv run pytest -q`, manual checks, etc.).
    - Include discovery tasks (audits, dependency review) before implementation steps and mark optional parallel tracks as `[P]`.
    - Embed code fences or command snippets where they clarify changes (migrations, component sketches, test commands).
 
-4. **Spec Deltas**
+6. **Spec Deltas**
    - For each capability, create or update `.flow-maestro/projects/<project>/changes/<change-id>/specs/<capability>/spec.md` using OpenSpec-style headers (`## ADDED`, `## MODIFIED`, etc.).
    - Tie delta narrative back to sections in `plan.md` or specific tasks.
 
-5. **Log Progress**
+7. **Log Progress**
    - Append a `blueprint` entry to `timeline.jsonl` summarizing scope, research highlights, owners, and next command.
 
 ## Output Templates
