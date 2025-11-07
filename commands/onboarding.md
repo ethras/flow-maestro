@@ -5,6 +5,8 @@ argument-hint: (no arguments)
 
 # `/onboarding` — Flow Maestro Setup
 
+Treat `/onboarding` as shorthand for this `commands/onboarding.md` runbook. Reference the file path when sharing steps so collaborators (and agents) read the Markdown instead of expecting a slash command to execute.
+
 Use this script when a repository is adopting Flow Maestro's OpenSpec-style workflow. The goal is to install assets, register projects, and understand the simplified `/ideate → /blueprint → /work → /qa` loop.
 
 ---

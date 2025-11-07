@@ -34,14 +34,14 @@ flowm specs validate add-auth-provider
 
 ## Workflow Overview
 
-Flow Maestro now mirrors OpenSpec’s simple loop — `/ideate → /blueprint → /work → /qa` — with state stored under `.flow-maestro/projects/<project>/changes/<change-id>/`.
+Flow Maestro now mirrors OpenSpec’s simple loop — `/ideate → /blueprint → /work → /qa` — with state stored under `.flow-maestro/projects/<project>/changes/<change-id>/`. The slash names are shorthand for Markdown guides in `commands/*.md`; for example `/ideate` means “open `commands/ideate.md` and follow it.” Mention the alias when chatting, but link or quote the file so humans and agents know where to read.
 
 | Stage | Command   | Purpose |
 |-------|-----------|---------|
-| 1     | `/ideate` | Capture the problem, constraints, and success signals in `spec.md`. |
-| 2     | `/blueprint`   | Produce `blueprint.md`, `tasks.md`, and delta spec skeletons. |
-| 3     | `/work`   | Execute tasks, journal progress, and refresh deltas. |
-| 4     | `/qa`     | Verify outcomes, finalize delta specs, and prep for merge. |
+| 1     | `/ideate` (`commands/ideate.md`) | Capture the problem, constraints, and success signals in `spec.md`. |
+| 2     | `/blueprint` (`commands/blueprint.md`)  | Produce `blueprint.md`, `tasks.md`, and delta spec skeletons. |
+| 3     | `/work` (`commands/work.md`)  | Execute tasks, journal progress, and refresh deltas. |
+| 4     | `/qa` (`commands/qa.md`)    | Verify outcomes, finalize delta specs, and prep for merge. |
 
 Supporting CLI subcommands:
 

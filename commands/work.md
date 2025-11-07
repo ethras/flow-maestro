@@ -5,6 +5,8 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/work` — Stage 3: Execute & Record
 
+The `/work` alias points to this `commands/work.md` checklist; cite the file when collaborating so readers (or agents) know to open the Markdown rather than run a slash command.
+
 `/work` drives implementation. Use it to track progress against `tasks.md` (including sub-bullets), capture notes, and keep delta specs aligned with reality.
 
 ## Objectives

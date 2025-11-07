@@ -5,6 +5,8 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/blueprint` — Stage 2: Implementation Blueprint
 
+`/blueprint` is a shortcut name for this `commands/blueprint.md` playbook. Mention the file path when directing humans or agents so they read the Markdown instead of expecting a slash command to execute.
+
 `/blueprint` converts `spec.md` into a detailed execution blueprint and task list packed with research notes, file paths, pseudo-steps, and code samples. The output lives alongside `/ideate` in the change folder and prepares `/work` to execute confidently.
 
 ## Objectives

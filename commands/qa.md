@@ -5,6 +5,8 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/qa` — Stage 4: Quality & Sign-off
 
+`/qa` is the conversational alias for this `commands/qa.md` checklist; always point teammates and agents at the Markdown so they read the guidance instead of assuming a slash command will run.
+
 `/qa` verifies that implementation matches the blueprint and that delta specs describe the final behavior. Use it before calling `flowm specs apply`.
 
 ## Objectives

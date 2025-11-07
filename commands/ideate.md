@@ -5,6 +5,8 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 
 # `/ideate` — Stage 1: Clarify the Change
 
+`/ideate` is just the chat-friendly alias for this `commands/ideate.md` guide. When giving instructions (especially to agents), reference the file path so there’s no expectation of a literal `/ideate` command executing.
+
 Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-maestro/projects/<project>/changes/<change-id>/spec.md`.
 
 ## Objectives
