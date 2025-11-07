@@ -27,6 +27,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
    - Use all available channels: `flowm research capture` for git/code snapshots, Context7 queries for library docs, and web search when repo knowledge isn’t enough. Quote or paraphrase each result with links or cite-able identifiers so the next agent can act without repeating the lookup.
    - Highlight blockers, open questions, and follow-ups inline. Call out exactly which future task or plan section each finding supports (e.g., “feeds plan.md › Phases › Phase 2” or “unblocks tasks.md › 1.3”).
    - When screenshots or large outputs matter, link to artifacts stored under `notes/` or `assets/` and reference them from `plan.md`.
+   - Promote reusable, cross-change insights into `.flow-maestro/projects/<project>/constitution.md` once you’ve validated them. Each entry needs a title, short summary, source (change/path:line), and “Last verified” date; keep speculative notes in `notes/` until they harden.
 
 3. **Blueprint Structure**
    - Update `plan.md` with sections:

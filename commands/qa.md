@@ -65,6 +65,8 @@ Keep each requirement laser-focused on normative behavior. If background context
 
 5. **Timeline Entry**
    - Append a `qa` event to `timeline.jsonl` stating results and next steps (apply vs. return to work).
+6. **Constitution Review**
+   - Re-read `.flow-maestro/projects/<project>/constitution.md` to ensure new findings are captured and outdated entries are updated with fresh “Last verified” dates. Note any mismatches as QA findings until resolved.
 
 ## Output Skeleton
 
@@ -98,6 +100,7 @@ Keep each requirement laser-focused on normative behavior. If background context
 - [ ] `qa.md` documents verification and findings
 - [ ] Delta specs validated via CLI
 - [ ] Follow-ups captured (new tasks or future changes)
+- [ ] Project constitution reviewed/updated (new entries added or last-verified stamps refreshed)
 - [ ] Timeline updated with QA outcome
 
 **Next**: Run `flowm specs apply <change-id>` to merge deltas and archive the change. If issues persist, return to `/work` and iterate.

@@ -19,6 +19,7 @@ Use `/ideate` to turn vague ideas into a confident proposal stored in `.flow-mae
 
 1. **Set Context**
    - Confirm the active project via `flowm projects use <slug>`.
+   - Review the project constitution (`.flow-maestro/projects/<slug>/constitution.md`) to understand existing architecture, contracts, and guardrails. Note any contradictions or gaps you uncover.
    - Scaffold the change if it doesn’t exist: `flowm changes init <change-id> --project <slug>`.
 
 2. **Spec Interview (no code allowed)**
@@ -56,7 +57,7 @@ The default scaffold already includes all required headings; replace placeholder
 - [NEEDS CLARIFICATION: …]
 ```
 
-Store supplementary research in `notes/` or `assets/` inside the change folder.
+Store supplementary research in `notes/` or `assets/` inside the change folder. Promote only reusable, validated insights to the project constitution after `/blueprint` confirms them.
 
 ## Validation Checklist
 

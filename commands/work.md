@@ -42,6 +42,9 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 5. **Timeline Entry**
    - Record a `work` event in `timeline.jsonl` summarizing progress and next steps.
 
+6. **Constitution Touch-up**
+   - When execution surfaces a reusable pattern, integration constraint, or recurring risk, add or update the project constitution entry (short title, summary, source, last verified). If an existing entry becomes obsolete, update its summary and verification date or remove it.
+
 ## Change vs Capability Handshake
 
 - Treat the change folder as the parent artifact: it owns `spec.md`, `plan.md`, `tasks.md`, journals, and QA notes.
@@ -52,6 +55,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 ## Validation Checklist
 
 - [ ] Research gaps resolved (new findings logged in `notes/research.md` and linked from `plan.md`/`tasks.md`)
+- [ ] Constitution updated if reusable insights emerged (or existing entries re-verified)
 - [ ] Journal updated with date/time and key decisions
 - [ ] `tasks.md` reflects actual status with updated sub-bullets
 - [ ] Delta specs match implemented behavior
