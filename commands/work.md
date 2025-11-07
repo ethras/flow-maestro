@@ -19,7 +19,8 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 
 1. **Prep**
    - Select the active project/change (`flowm projects use`, `flowm changes show`).
-  - Review `plan.md` and `tasks.md` for sequencing.
+   - Review `plan.md` and `tasks.md` for sequencing.
+   - Skim `notes/research.md`. If the Research & Discovery section in `plan.md` or the research log is thin, run the missing investigations now (Context7 queries, `flowm research capture`, web searches) before touching code. Append every new finding to `notes/research.md` with timestamps so the rest of the phase inherits the context.
 
 2. **Execution Journal**
    - For each working block, append to `notes/journal.md`:
@@ -50,6 +51,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 
 ## Validation Checklist
 
+- [ ] Research gaps resolved (new findings logged in `notes/research.md` and linked from `plan.md`/`tasks.md`)
 - [ ] Journal updated with date/time and key decisions
 - [ ] `tasks.md` reflects actual status with updated sub-bullets
 - [ ] Delta specs match implemented behavior
