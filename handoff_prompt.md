@@ -4,6 +4,10 @@ Follow the Strategos loop: reference the active change under `.flow-maestro/proj
 
 ---
 
+## **Where To Resume**
+- **Open first:** [`path/to/file.md:#L` short reason this is the next task]
+- **Context trail:** [Any supporting file(s) the next agent should skim second]
+
 ## **Objective & Stage**
 - **Goal:** [One sentence describing the change outcome tied to the project/change ID]
 - **Stage:** [Ideate / Blueprint / Work / QA | % complete | link to file, e.g., `commands/blueprint.md`]
@@ -44,9 +48,9 @@ What’s left before `flowm specs apply`:
 - **Mitigations:** [backup plan, feature flag, fallback spec update]
 
 ## **Next Actions**
-1. Most urgent action (include command/file, e.g., “Complete `/work` task 3: refactor `apps/web/...`”)
-2. Second priority
-3. Third priority
+1. Most urgent action (start with the file/line to edit, e.g., ``commands/init/tasks.md:#L37`` – explain the precise change + any command like `/work` task refs)
+2. Second priority (same file-first pattern)
+3. Third priority (same file-first pattern)
 
 ---
 

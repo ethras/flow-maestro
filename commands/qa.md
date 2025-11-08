@@ -37,6 +37,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 4. **Spec Audit**
    - Run `flowm specs validate <change-id>` to ensure delta structure is sound.
    - Double-check that scenarios cover success/error paths.
+   - Regenerate manifests via `flowm specs prepare <change-id>` (refreshes `specs_manifest.json` + `merge.diff` files) and, once QA passes, call `flowm specs merge <change-id> --finalize` to apply + archive the change.
 
 ### Delta spec template
 

@@ -47,6 +47,7 @@ argument-hint: {"change_id":"<slug>","project":"<slug>"}
 6. **Spec Deltas**
    - For each capability, create or update `.flow-maestro/projects/<project>/changes/<change-id>/specs/<capability>/spec.md` using OpenSpec-style headers (`## ADDED`, `## MODIFIED`, etc.).
    - Tie delta narrative back to sections in `plan.md` or specific tasks.
+   - Once the deltas have real content, run `flowm specs prepare <change-id>` so reviewers inherit `specs_manifest.json` + per-capability `merge.diff` snapshots before `/work` begins.
 
 7. **Log Progress**
    - Use `flowm timeline log --command blueprint "<scope + next command>"` to record research highlights, owners, and the next stage. Do not edit `timeline.jsonl` manually.

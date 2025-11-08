@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -11,6 +12,9 @@ from typing import Dict, Iterable, List, Optional, Tuple
 STATE_DIR_NAME = "state"
 PROJECTS_FILENAME = "projects.json"
 SESSION_FILENAME = "session.json"
+SPEC_MANIFEST_FILENAME = "specs_manifest.json"
+SPEC_MERGE_REPORT_FILENAME = "specs_merge_report.json"
+SPEC_INDEX_FILENAME = "spec_index.json"
 
 
 class StateError(RuntimeError):
@@ -77,6 +81,22 @@ def change_dir(flow_dir: Path, project: str, change_id: str) -> Path:
 
 def canonical_spec_path(flow_dir: Path, project: str, capability: str) -> Path:
     return project_dir(flow_dir, project) / "specs" / capability / "spec.md"
+
+
+def spec_manifest_path(flow_dir: Path, project: str, change_id: str) -> Path:
+    return change_dir(flow_dir, project, change_id) / SPEC_MANIFEST_FILENAME
+
+
+def spec_merge_report_path(flow_dir: Path, project: str, change_id: str) -> Path:
+    return change_dir(flow_dir, project, change_id) / SPEC_MERGE_REPORT_FILENAME
+
+
+def project_state_dir(flow_dir: Path, project: str) -> Path:
+    return project_dir(flow_dir, project) / "state"
+
+
+def spec_index_path(flow_dir: Path, project: str) -> Path:
+    return project_state_dir(flow_dir, project) / SPEC_INDEX_FILENAME
 
 
 def change_delta_specs(flow_dir: Path, project: str, change_id: str) -> List[Tuple[str, Path]]:
@@ -304,3 +324,31 @@ def relative_to_project(project_meta: Dict, current_path: Path) -> Optional[str]
     except Exception:
         return None
     return relative.as_posix()
+
+
+_SLUG_RE = re.compile(r"[^a-z0-9._-]+")
+
+
+def slugify_identifier(value: str) -> str:
+    token = value.strip().lower()
+    if not token:
+        return "item"
+    token = _SLUG_RE.sub("-", token)
+    token = token.strip("-")
+    return token or "item"
+
+
+def load_spec_index(flow_dir: Path, project: str) -> Dict[str, Dict[str, str]]:
+    path = spec_index_path(flow_dir, project)
+    if not path.exists():
+        return {}
+    data = _load_json(path, {})
+    if not isinstance(data, dict):
+        raise StateError("spec_index.json must contain an object")
+    return data
+
+
+def save_spec_index(flow_dir: Path, project: str, data: Dict[str, Dict[str, str]]) -> None:
+    path = spec_index_path(flow_dir, project)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")

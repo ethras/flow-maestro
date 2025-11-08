@@ -1,6 +1,6 @@
 # Flow Maestro Installer (flowm)
 
-Install and update Flow Maestro assets into any project under `.flow-maestro/` using a small Python CLI distributed via `uv`.
+Install and update Flow Maestro assets into any project under `.flow-maestro/` using a small Python CLI distributed via `uv`. The CLI now exposes dedicated modules for projects, changes, specs, research, quality, timeline, installer helpers, and—new in v0.4.10—constitution management so reusable findings stay consistent across commands and documentation.
 
 ## Quick start
 
@@ -46,8 +46,10 @@ Flow Maestro now mirrors OpenSpec’s simple loop — `/ideate → /blueprint �
 Supporting CLI subcommands:
 
 - `flowm projects add|list|use` — manage project slugs mapped to repo paths.
+- `flowm projects constitution record` — append or refresh entries in `.flow-maestro/projects/<project>/constitution.md` with normalized formatting (title, summary, source, verification date, optional owner for watchlist entries). Use this instead of manual Markdown edits.
 - `flowm changes init|list|show` — scaffold and inspect change folders.
-- `flowm specs validate|apply` — lint delta specs then merge them into canonical specs.
+- `flowm specs status|prepare|merge|validate|apply` — list pending delta specs, build manifests + diffs, merge them into canonical specs, or fall back to the original validate/apply flow when needed.
+- `flowm specs rename-capability` — rename canonical + in-flight capability folders so names stay product-oriented (e.g., consolidate `expenses-mobile`, `expenses-web`, `expenses-backend` into a single `expenses`).
 - `flowm research capture` - append git history and `rg` snapshots to `notes/research.md` for the active change; run it (and any Context7/web lookups) during `/blueprint`, and again during `/work` if new questions appear.
 - `flowm quality check` - flag placeholder text in `spec.md`, `plan.md`, or `tasks.md` before handing off to `/blueprint` or `/work`.
 - `flowm timeline show|log` - review timeline entries or append milestones; always use this command instead of editing `timeline.jsonl` manually.
@@ -64,6 +66,7 @@ Each release ships the updated command docs and templates. Scripts previously ti
 - TLS verification is on by default; `--skip-tls` is available for special cases.
 - `.flow-maestro/workbench/` remains a scratchpad for research notes.
 - Canonical specs live under `.flow-maestro/projects/<project>/specs/` and are updated via `flowm specs apply`.
+- Run `flowm specs prepare <change>` before `/qa` to capture `specs_manifest.json` and per-capability `merge.diff` files; agents (or reviewers) can read `specs_merge_report.json` after `flowm specs merge` to understand what changed.
 - Every project owns `.flow-maestro/projects/<project>/constitution.md`, a curated log of architecture patterns, integration contracts, operational guardrails, and recurring risks. Only reusable, validated insights belong there—reference it before `/ideate`, promote new findings during `/blueprint`, and refresh it via `flowm projects constitution record` as `/work` and `/qa` surface new information.
 
 ## Project Constitution
@@ -75,7 +78,36 @@ Flow Maestro relies on a “constitution” file per project to keep persistent 
 - **Guardrails**: Include only information that multiple changes should know. If it’s speculative or limited to the active change, leave it in `notes/` or `plan.md` until proven.
 - **Workflow hooks**: `/ideate` reviews constitution for background; `/blueprint` promotes reusable research into new entries; `/work` backfills anything discovered mid-build; `/qa` double-checks that entries remain accurate after verification. Each stage should use `flowm projects constitution record` so entries stay normalized and dated automatically.
 
-Treat the constitution as the project’s collective memory—the leaner and better sourced it is, the faster future changes ramp up.
+### Recording a finding
+
+```bash
+flowm projects constitution record "Event Bus Guardrail" \
+  --summary "Route audit events through Kafka with schema v3; never bypass retries" \
+  --source "chg-123/src/events.py:42" \
+  --section operations \
+  --project web
+```
+
+- Omitting `--verified` stamps today’s date automatically (UTC). Pass `--verified YYYY-MM-DD` when backfilling older insights.
+- When `--section watchlist` is chosen, include `--owner <team>` so the entry tracks who is watching the risk.
+- Re-running the command with the same title in the same section replaces the existing block (helpful for refreshing “Last verified” without editing Markdown).
+
+### Constitution touchpoints per stage
+
+| Stage | What to read/update | CLI helper |
+|-------|---------------------|-----------|
+| `/ideate` | Read existing constitution entries for context; log contradictions as research tasks. | `flowm projects constitution record` (only when you convert a research insight into a reusable guardrail). |
+| `/blueprint` | Promote validated research into entries so downstream stages inherit constraints. | `flowm projects constitution record --section core|data|operations|risks|watchlist`. |
+| `/work` | Backfill mid-build discoveries (integration constraints, reusable code paths) and cite them in `notes/journal.md`. | Same command; include `--source change-id/path:line` for traceability. |
+| `/qa` | Refresh “Last verified” dates for anything touched and prune obsolete entries. | `flowm projects constitution record --verified <date>` when re-validating. |
+
+Treat the constitution as the project’s collective memory—the leaner and better sourced it is, the faster future changes ramp up. Because the entry helper enforces structure, you can safely rely on automated diffs to spot what changed between releases.
+
+### Capability naming & consolidation
+
+- Capabilities should reflect user-facing domains (`expenses`, `billing`, `auth`) rather than channel-specific slices (`expenses-mobile`). This keeps canonical specs stable while change folders carry the platform nuance.
+- If legacy projects already diverged, use `flowm specs rename-capability <old> <new>` to move canonical specs and active delta folders to the new name. Run `flowm specs prepare` afterward to refresh manifests.
+- When several channel-specific folders must collapse into one, pick the target name (e.g., `expenses`), migrate/merge the Markdown content manually inside `.flow-maestro/projects/<project>/specs/<target>/spec.md`, then remove the obsolete folders via `flowm specs rename-capability`.
 
 ## Release process
 
@@ -106,3 +138,12 @@ uv tool install flowm-cli --from git+https://github.com/ethras/flow-maestro.git
 # or one-off
 uvx --from git+https://github.com/ethras/flow-maestro.git flowm init --here
 ```
+
+### Post-release checklist
+
+After tagging, but before announcing, run:
+
+1. `uv tool install flowm-cli --from git+https://github.com/ethras/flow-maestro.git@vX.Y.Z --force`
+2. `flowm version` (expect `X.Y.Z`).
+3. Spot-check `flowm projects constitution record --help` to ensure the new helper ships as expected.
+4. Re-run `uv run flowm --help` in a clean workspace to confirm Typer wiring still lists all subcommands.

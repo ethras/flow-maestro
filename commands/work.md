@@ -38,6 +38,7 @@ The `/work` alias points to this `commands/work.md` checklist; cite the file whe
 
 4. **Delta Refresh**
    - Keep capability deltas current. Any new requirements discovered during implementation must land in the corresponding `specs/<capability>/spec.md` file.
+   - Run `flowm specs prepare <change-id>` whenever you wrap a working block so manifests/diffs stay in sync for reviewers or agents that will call `flowm specs merge` later on.
 
 5. **Timeline Entry**
    - Record a `work` event using `flowm timeline log --command work "<progress + next steps>"`. Never append directly to `timeline.jsonl`.

@@ -17,6 +17,10 @@ apply_deltas_to_spec = state.apply_deltas_to_spec
 ensure_canonical_spec = state.ensure_canonical_spec
 parse_delta_markdown = state.parse_delta_markdown
 validate_delta_result = state.validate_delta_result
+slugify_identifier = state.slugify_identifier
+load_spec_index = state.load_spec_index
+save_spec_index = state.save_spec_index
+spec_index_path = state.spec_index_path
 
 
 def test_apply_added_requirement(tmp_path: Path) -> None:
@@ -74,3 +78,22 @@ Body without scenario
     errors = validate_delta_result(parsed)
     assert errors
     assert "missing scenario" in errors[0].lower()
+
+
+def test_slugify_identifier_handles_symbols() -> None:
+    assert slugify_identifier("Expenses Mobile!!") == "expenses-mobile"
+    assert slugify_identifier("   ") == "item"
+
+
+def test_spec_index_roundtrip(tmp_path: Path) -> None:
+    flow_dir = tmp_path / ".flow-maestro"
+    flow_dir.mkdir()
+    project = "demo"
+    project_root = flow_dir / "projects" / project
+    project_root.mkdir(parents=True)
+    data = {"req-1": {"capability": "expenses", "title": "Totals"}}
+    save_spec_index(flow_dir, project, data)
+    path = spec_index_path(flow_dir, project)
+    assert path.exists()
+    loaded = load_spec_index(flow_dir, project)
+    assert loaded == data
