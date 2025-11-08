@@ -49,7 +49,7 @@ This creates `spec.md`, `plan.md`, `tasks.md`, an empty `qa.md`, and delta spec 
 - `/work`: Execute tasks, capture notes, and mark progress.
 - `/qa`: Summarize verification in `qa.md` before applying spec deltas.
 
-Track progress with `flowm changes show <change-id>` and create additional deltas as needed.
+Track progress with `flowm changes show <change-id>` and create additional deltas as needed. Use `flowm specs status --project <slug>` anytime to list changes that already contain delta specs—ideal when deciding what the agent should merge next.
 
 ### Research & Quality Helpers
 
@@ -88,7 +88,7 @@ Flow Maestro inherits the Strategos Prime cadence—every change moves through f
 2. `/blueprint` decides which capabilities move and drafts deltas.
 3. `/work` pushes detailed decisions into journals and deltas.
 4. `/qa` verifies capability outcomes and finalizes deltas.
-5. `flowm specs apply` projects those deltas into canonical specs before archiving the change.
+5. `flowm specs merge --finalize` (or `specs apply` for legacy flows) projects those deltas into canonical specs before archiving the change.
 
 ### Coordination rules
 
@@ -104,16 +104,22 @@ Flow Maestro inherits the Strategos Prime cadence—every change moves through f
 - If two changes touch the same capability, coordinate ordering or reconcile delta files before running `specs apply`.
 - After `flowm specs apply`, archive immediately; never keep mutable state in `changes/` once the spec merges.
 
-## Step 5: Apply Specs
+## Step 5: Spec Merge Loop (New Workflow)
 
-Once QA passes, merge deltas into canonical specs and archive the change:
+Agents now rely on a manifest/diff workflow before touching canonical specs:
 
-```bash
-flowm specs validate add-auth-provider
-flowm specs apply add-auth-provider
-```
+1. **Status sweep** — `flowm specs status --project <slug>` lists every change with pending deltas plus timestamps for the latest manifest/report. Start here to pick the next merge target.
+2. **Prepare** — `flowm specs prepare <change-id>` parses every delta once, validates scenarios, emits `specs_manifest.json`, and writes per-capability `merge.diff` files inside the change folder. Re-run this after `/blueprint` and after each `/work` block so reviewers inherit the latest preview.
+3. **Merge** — `flowm specs merge <change-id> [--dry-run] [--diff]` consumes the manifest and updates `.flow-maestro/projects/<project>/specs/<capability>/spec.md`. It also refreshes `state/spec_index.json` so requirement IDs remain stable. Pass `--finalize` (without `--dry-run`) once QA is ✅ to append a timeline event and archive the change.
+4. **Fallback** — `flowm specs validate` / `specs apply` remain available for older changes, but new work should prefer `prepare` + `merge` so agents have manifests and JSON reports (`specs_merge_report.json`).
 
-Canonical specs live under `.flow-maestro/projects/<project>/specs/`. After `apply`, the change moves to `changes/archive/`.
+Canonical specs live under `.flow-maestro/projects/<project>/specs/`. After a successful `merge --finalize`, the change folder moves into `changes/archive/` automatically.
+
+### Capability naming & consolidation (agent cues)
+
+- Capabilities should reflect business domains (`expenses`, `auth`) rather than channel slices (`expenses-mobile`). If a repo already contains channel-specific folders, consolidate with `flowm specs rename-capability old new --project <slug>` to move canonical specs and active change folders in one shot.
+- For multiple legacy names (e.g., `expenses-mobile`, `expenses-web`, `expenses-backend`), pick `expenses` as the new canonical folder, merge the Markdown content manually, then run the rename command for each variant. Finish by re-running `flowm specs prepare` so manifests/diffs point to the new capability.
+- The rename command updates `state/spec_index.json`, so downstream merges continue referencing the same requirement IDs.
 
 ---
 
@@ -123,7 +129,7 @@ Canonical specs live under `.flow-maestro/projects/<project>/specs/`. After `app
 - [ ] Projects registered in `state/projects.json`
 - [ ] First change folder scaffolded
 - [ ] Command loop understood (ideate → blueprint → work → qa)
-- [ ] Spec merge flow confirmed (`specs validate/apply`)
+- [ ] Spec merge loop confirmed (`specs status|prepare|merge --finalize` or legacy `validate/apply` where required)
 
 ---
 
